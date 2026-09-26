@@ -47,9 +47,9 @@ Sistema de gestión de pedidos con arquitectura de microservicios desplegado en 
 
 | Email | Rol | Password |
 |-------|-----|----------|
-| admin@nachoduoccl.onmicrosoft.com | Administrador | (Azure) |
-| operador@nachoduoccl.onmicrosoft.com | Operador | (Azure) |
-| cliente@nachoduoccl.onmicrosoft.com | Cliente | (Azure) |
+| admin@nachoduoccl.onmicrosoft.com | Administrador | Sowu362516 |
+| operador@nachoduoccl.onmicrosoft.com | Operador | Dutu321400 |
+| cliente@nachoduoccl.onmicrosoft.com | Cliente |Suru269006 |
 
 ## 🛠️ Tecnologías
 
