@@ -213,10 +213,3 @@ Los datos **persisten entre reinicios** del servidor.
 Proyecto académico - Computación en la Nube  
 DuocUC - 2026
 
-## 👨‍💻 Autor
-
-Ignacio - [Ignaciogvr](https://github.com/Ignaciogvr)
-
----
-
-**⭐ Si te gusta el proyecto, dale una estrella!**
