@@ -1,0 +1,52 @@
+<div class="app-container">
+
+  <ng-container>
+    <nav class="navbar">
+      <div class="brand">⚡ Pedidos360</div>
+
+      <div class="nav-links" *ngIf="isLoggedIn">
+        <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+        <a routerLink="/orders" routerLinkActive="active">Pedidos</a>
+        <a routerLink="/catalog" routerLinkActive="active">Catálogo</a>
+      </div>
+
+      <div class="auth-section">
+        <ng-container *ngIf="!isLoggedIn">
+          <button class="btn-primary" (click)="login()">Iniciar Sesión</button>
+        </ng-container>
+
+        <ng-container *ngIf="isLoggedIn">
+          <div class="user-profile">
+            <div class="user-info">
+              <span class="user-name">{{ userName }}</span>
+              <span class="user-role" [ngClass]="'role-' + (userRoles[0] || '')">{{ userRoles.join(', ') || 'Sin Rol' }}</span>
+            </div>
+            <a routerLink="/profile" class="user-avatar" title="Ver perfil">{{ userName.charAt(0).toUpperCase() }}</a>
+            <button class="btn-outline" (click)="logout()">Salir</button>
+          </div>
+        </ng-container>
+      </div>
+    </nav>
+
+    <main class="main-content">
+      <ng-container *ngIf="!isLoggedIn">
+        <div class="welcome-screen">
+          <div class="welcome-badge">🔐 Plataforma corporativa segura</div>
+          <h1>Bienvenido a Pedidos360</h1>
+          <p>Gestiona tus pedidos de forma segura con autenticación corporativa de Microsoft Azure Entra ID.</p>
+          <button class="btn-primary btn-large" (click)="login()">
+            <svg width="20" height="20" viewBox="0 0 21 21" fill="none" style="display:inline;vertical-align:middle;margin-right:8px">
+              <rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/>
+              <rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/>
+            </svg>
+            Ingresar con Microsoft
+          </button>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="isLoggedIn">
+        <router-outlet></router-outlet>
+      </ng-container>
+    </main>
+  </ng-container>
+</div>

@@ -1,0 +1,36 @@
+# Archivos de compilación
+**/build/
+**/bin/
+**/.gradle/
+**/gradle/
+**/gradlew
+**/gradlew.bat
+
+# Node modules
+**/node_modules/
+**/dist/
+
+# Archivos IDE
+**/.vscode/
+**/.idea/
+**/*.iml
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Credenciales y claves (IMPORTANTE)
+*.pem
+credenciales.txt
+**/*.key
+**/*.crt
+
+# Archivos temporales
+*.log
+*.tmp
+**/.angular/
+
+# Base de datos locales
+**/data/*.db
+**/data/*.mv.db
+**/data/*.trace.db

@@ -1,0 +1,24 @@
+server:
+  port: 8080
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://sts.windows.net/b6f34517-563c-4ce9-a10b-6f3958083091/
+          jwk-set-uri: https://login.microsoftonline.com/b6f34517-563c-4ce9-a10b-6f3958083091/discovery/v2.0/keys
+          audiences: api://3bdb2628-3745-4907-9593-53d8c7cb36fb
+
+# EL BFF YA NO TIENE BASE DE DATOS
+# Llama a los microservicios
+servicios:
+  ordenes:
+    url: http://localhost:8081/api/pedidos
+  catalogo:
+    url: http://localhost:8082/api/catalogo
+
+logging:
+  level:
+    org.springframework.security: TRACE
+    org.springframework.web: TRACE
