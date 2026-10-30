@@ -56,7 +56,7 @@ export class PermissionService {
    * Check if user can manage the product catalog
    */
   canManageCatalog(): boolean {
-    return this.hasRole('Admin');
+    return this.hasAnyRole(['Admin', 'Operador']);
   }
   
   /**

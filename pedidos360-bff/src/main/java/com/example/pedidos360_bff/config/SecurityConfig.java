@@ -46,7 +46,9 @@ public class SecurityConfig {
             "https://54.82.58.51",             // producción AWS
             "http://54.82.58.51",              // producción HTTP
             "https://54.145.51.231",          // producción AWS EC2
-            "http://54.145.51.231"            // producción AWS EC2 (sin SSL)
+            "http://54.145.51.231",
+            "https://54.235.23.71",
+            "http://54.235.23.71"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
