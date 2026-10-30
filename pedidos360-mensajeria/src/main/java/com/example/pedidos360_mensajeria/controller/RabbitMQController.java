@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/api/mensajeria")
-@CrossOrigin(origins = {"https://54.145.51.231", "http://localhost:4200"})
+@CrossOrigin(origins = {"https://54.235.23.71", "https://54.145.51.231", "http://localhost:4200"})
 public class RabbitMQController {
 
     private static final Logger log = LoggerFactory.getLogger(RabbitMQController.class);

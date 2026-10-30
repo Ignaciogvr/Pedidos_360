@@ -1,5 +1,7 @@
 package com.example.pedidos360_mensajeria.config;
 
+import org.springframework.amqp.core.AcknowledgeMode;
+import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -19,5 +21,14 @@ public class RabbitAdminConfig {
         RabbitTemplate template = new RabbitTemplate(connectionFactory);
         template.setMandatory(true);
         return template;
+    }
+
+    @Bean
+    public SimpleRabbitListenerContainerFactory manualAckListenerContainerFactory(
+            ConnectionFactory connectionFactory) {
+        SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
+        factory.setConnectionFactory(connectionFactory);
+        factory.setAcknowledgeMode(AcknowledgeMode.MANUAL);
+        return factory;
     }
 }

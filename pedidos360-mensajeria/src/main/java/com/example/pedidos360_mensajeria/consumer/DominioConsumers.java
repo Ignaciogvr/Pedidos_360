@@ -15,17 +15,17 @@ public class DominioConsumers {
         this.procesador = procesador;
     }
 
-    @RabbitListener(queues = "pedidos360.notificaciones.queue")
+    @RabbitListener(queues = "pedidos360.notificaciones.queue", containerFactory = "manualAckListenerContainerFactory")
     public void consumeNotificaciones(Message message, Channel channel) throws IOException {
         procesador.procesar("notificaciones", message, channel);
     }
 
-    @RabbitListener(queues = "pedidos360.auditoria.queue")
+    @RabbitListener(queues = "pedidos360.auditoria.queue", containerFactory = "manualAckListenerContainerFactory")
     public void consumeAuditoria(Message message, Channel channel) throws IOException {
         procesador.procesar("auditoria", message, channel);
     }
 
-    @RabbitListener(queues = "pedidos360.inventario.queue")
+    @RabbitListener(queues = "pedidos360.inventario.queue", containerFactory = "manualAckListenerContainerFactory")
     public void consumeInventario(Message message, Channel channel) throws IOException {
         procesador.procesar("inventario", message, channel);
     }
