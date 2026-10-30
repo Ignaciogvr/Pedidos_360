@@ -1,0 +1,121 @@
+﻿<div class="orders-page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">{{ esAdminUOperador ? '📋 Gestión de Pedidos' : '📦 Mis Pedidos' }}</h1>
+      <p class="page-subtitle">{{ esAdminUOperador ? 'Vista completa del sistema' : 'Historial y estado de tus pedidos' }}</p>
+    </div>
+    <button class="btn-primary" (click)="cargarPedidos()">🔄 Actualizar</button>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="error()" class="alert-error">⚠️ {{ error() }}</div>
+
+  <!-- VISTA ADMIN/OPERADOR -->
+  <ng-container *ngIf="esAdminUOperador">
+    <!-- Filtros -->
+    <div class="glass-card filters-bar">
+      <div class="filters-left">
+        <span class="filter-label">Estado:</span>
+        <button *ngFor="let f of filtrosEstado" class="filter-btn" [class.active]="filtroActivo() === f.value" (click)="setFiltro(f.value)">{{ f.label }}</button>
+      </div>
+      <div class="filters-right">
+        <span class="filter-label">Cliente:</span>
+        <input type="text" [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)" placeholder="Email o nombre..." class="form-input form-input-sm" />
+      </div>
+    </div>
+
+    <!-- Spinner -->
+    <app-loading-spinner *ngIf="cargando()" message="Cargando pedidos..."></app-loading-spinner>
+
+    <!-- Tabla -->
+    <app-order-table 
+      *ngIf="!cargando()"
+      [pedidos]="pedidosFiltrados()"
+      [showEditButton]="puedeCambiarEstado"
+      [showCancelButton]="puedeEliminar"
+      (rowClick)="abrirDetalle($event)"
+      (editClick)="abrirModalEstado($event)"
+      (cancelClick)="cancelar($event)">
+    </app-order-table>
+  </ng-container>
+
+  <!-- VISTA CLIENTE -->
+  <ng-container *ngIf="!esAdminUOperador">
+    <app-loading-spinner *ngIf="cargando()" message="Cargando tus pedidos..."></app-loading-spinner>
+
+    <!-- Empty state -->
+    <div class="client-empty" *ngIf="!cargando() && orders().length === 0">
+      <span>⚙️</span>
+      <h3>No tienes pedidos aún</h3>
+      <p>Ve al catálogo de Productos para hacer tu primer pedido</p>
+    </div>
+
+    <!-- Grid de tarjetas -->
+    <div class="client-orders-grid" *ngIf="!cargando() && orders().length > 0">
+      <app-order-card 
+        *ngFor="let p of orders()" 
+        [pedido]="p"
+        (cardClick)="abrirDetalle($event)">
+      </app-order-card>
+    </div>
+  </ng-container>
+
+  <!-- Modal Detalle -->
+  <app-modal 
+    [isOpen]="modalDetalle()" 
+    [title]="'🔍 Detalle del Pedido #' + (pedidoDetalle()?.id || '')"
+    [size]="'lg'"
+    (onClose)="modalDetalle.set(false)">
+    
+    <div *ngIf="pedidoDetalle() as p" class="detalle-content">
+      <div class="detalle-item">
+        <strong>Producto:</strong> {{ p.producto }}
+      </div>
+      <div class="detalle-item">
+        <strong>Cantidad:</strong> {{ p.cantidad }}
+      </div>
+      <div class="detalle-item">
+        <strong>Estado:</strong> <span class="status-badge" [ngClass]="getEstadoClass(p.estado || 'PENDIENTE')">{{ p.estado }}</span>
+      </div>
+      <div class="detalle-item" *ngIf="p.clienteNombre">
+        <strong>Cliente:</strong> {{ p.clienteNombre }} ({{ p.clienteEmail }})
+      </div>
+      <div class="detalle-item" *ngIf="p.comentarioAdmin">
+        <strong>Mensaje Admin:</strong> <em>{{ p.comentarioAdmin }}</em>
+      </div>
+    </div>
+
+    <div footer>
+      <button class="btn-outline" (click)="modalDetalle.set(false)">Cerrar</button>
+      <button *ngIf="puedeCambiarEstado" class="btn-primary" (click)="modalDetalle.set(false); abrirModalEstado(pedidoDetalle()!)">✏️ Cambiar Estado</button>
+    </div>
+  </app-modal>
+
+  <!-- Modal Cambiar Estado -->
+  <app-modal 
+    [isOpen]="modalAbierto()" 
+    [title]="'✏️ Estado del pedido #' + (pedidoSeleccionado()?.id || '')"
+    (onClose)="cerrarModal()">
+    
+    <p class="modal-product">{{ pedidoSeleccionado()?.producto }}</p>
+    
+    <div class="estado-options">
+      <button *ngFor="let e of estados" class="estado-option" [class.selected]="nuevoEstado() === e.value" (click)="nuevoEstado.set(e.value)">
+        <span class="estado-icon">{{ e.icon }}</span><span>{{ e.label }}</span>
+      </button>
+    </div>
+    
+    <div class="comentario-section">
+      <label class="comentario-label">💬 Mensaje para el cliente (opcional)</label>
+      <textarea [(ngModel)]="comentarioAdmin" rows="3" placeholder="Ej: Tu pedido está siendo preparado..." class="form-input"></textarea>
+    </div>
+
+    <div footer>
+      <button class="btn-outline" (click)="cerrarModal()">Cancelar</button>
+      <button class="btn-primary" (click)="confirmarEstado()">Guardar cambio</button>
+    </div>
+  </app-modal>
+
+</div>

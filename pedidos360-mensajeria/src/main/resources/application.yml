@@ -1,0 +1,47 @@
+﻿server:
+  port: 8083
+
+spring:
+  application:
+    name: pedidos360-mensajeria
+
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER:guest}
+    password: ${RABBITMQ_PASS:guest}
+    publisher-confirm-type: correlated
+    publisher-returns: true
+    listener:
+      simple:
+        acknowledge-mode: manual
+        prefetch: 1
+        default-requeue-rejected: false
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://sts.windows.net/b6f34517-563c-4ce9-a10b-6f3958083091/
+          jwk-set-uri: https://login.microsoftonline.com/b6f34517-563c-4ce9-a10b-6f3958083091/discovery/v2.0/keys
+          audiences: api://3bdb2628-3745-4907-9593-53d8c7cb36fb
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus, health, info, metrics
+  endpoint:
+    prometheus:
+      enabled: true
+    health:
+      show-details: always
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+logging:
+  level:
+    root: INFO
+    com.example.pedidos360_mensajeria: INFO
+    org.springframework.amqp: INFO

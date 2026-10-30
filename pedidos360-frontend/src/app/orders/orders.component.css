@@ -1,0 +1,53 @@
+.orders-page { display: flex; flex-direction: column; gap: 1.25rem; }
+
+.page-header { display: flex; justify-content: space-between; align-items: center; }
+.page-title { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.03em; color: #f1f5f9; }
+.page-subtitle { color: #94a3b8; font-size: 0.88rem; margin-top: 0.25rem; }
+
+.alert-error { background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.3); color: #f87171; padding: 0.8rem 1.2rem; border-radius: 10px; }
+
+/* Filtros */
+.filters-bar { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; padding: 1rem 1.5rem; }
+.filters-left { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.filters-right { display: flex; align-items: center; gap: 0.5rem; margin-left: auto; }
+.filter-label { font-size: 0.78rem; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+.filter-btn { background: transparent; border: 1px solid rgba(255,255,255,0.1); color: #94a3b8; padding: 0.3rem 0.9rem; border-radius: 20px; font-size: 0.82rem; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+.filter-btn:hover { background: rgba(255,255,255,0.07); color: #f1f5f9; }
+.filter-btn.active { background: rgba(99,102,241,0.2); border-color: rgba(99,102,241,0.5); color: #a78bfa; font-weight: 700; }
+.form-input { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); color: #f1f5f9; padding: 0.55rem 1rem; border-radius: 8px; font-size: 0.9rem; transition: border-color 0.2s; }
+.form-input:focus { outline: none; border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.15); }
+.form-input-sm { width: 200px; }
+
+/* Botones */
+.btn-primary { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border: none; padding: 0.55rem 1.3rem; border-radius: 8px; font-weight: 600; font-size: 0.88rem; cursor: pointer; transition: all 0.2s; box-shadow: 0 0 15px rgba(99,102,241,0.3); }
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 0 25px rgba(99,102,241,0.5); }
+.btn-outline { background: transparent; color: #94a3b8; border: 1px solid rgba(255,255,255,0.12); padding: 0.55rem 1.2rem; border-radius: 8px; font-weight: 500; font-size: 0.88rem; cursor: pointer; transition: all 0.2s; }
+.btn-outline:hover { background: rgba(255,255,255,0.06); color: #f1f5f9; }
+
+/* Vista Cliente */
+.client-empty { text-align: center; padding: 5rem 2rem; color: #475569; }
+.client-empty span { font-size: 4rem; display: block; margin-bottom: 1rem; }
+.client-empty h3 { font-size: 1.3rem; color: #94a3b8; margin-bottom: 0.5rem; }
+.client-orders-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.2rem; }
+
+/* Modal Detalle */
+.detalle-content { display: flex; flex-direction: column; gap: 0.75rem; }
+.detalle-item { font-size: 0.9rem; color: #cbd5e1; line-height: 1.6; }
+.detalle-item strong { color: #a78bfa; margin-right: 0.5rem; }
+.modal-product { color: #94a3b8; font-size: 0.9rem; margin: 0; }
+
+/* Estado options */
+.estado-options { display: flex; flex-direction: column; gap: 0.6rem; }
+.estado-option { display: flex; align-items: center; gap: 0.8rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 0.8rem 1rem; cursor: pointer; transition: all 0.2s; color: #94a3b8; font-weight: 500; }
+.estado-option:hover { background: rgba(255,255,255,0.08); color: #f1f5f9; }
+.estado-option.selected { border-color: rgba(99,102,241,0.5); background: rgba(99,102,241,0.15); color: #a78bfa; }
+.estado-icon { font-size: 1.2rem; }
+
+.comentario-section { display: flex; flex-direction: column; gap: 0.4rem; }
+.comentario-label { font-size: 0.78rem; font-weight: 700; color: #64748b; text-transform: uppercase; }
+
+.status-badge { padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; display: inline-block; }
+.pendiente { background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
+.en_proceso { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
+.completado { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
+.cancelado { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }

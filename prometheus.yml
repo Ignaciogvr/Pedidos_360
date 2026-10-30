@@ -1,0 +1,44 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  # BFF Microservice
+  - job_name: 'pedidos360-bff'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:8080']
+        labels:
+          application: 'pedidos360-bff'
+
+  # Orders Microservice
+  - job_name: 'pedidos360-ordenes'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:8081']
+        labels:
+          application: 'pedidos360-ordenes'
+
+  # Catalog Microservice
+  - job_name: 'pedidos360-catalogo'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:8082']
+        labels:
+          application: 'pedidos360-catalogo'
+
+  # Messaging Microservice
+  - job_name: 'pedidos360-mensajeria'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:8083']
+        labels:
+          application: 'pedidos360-mensajeria'
+
+  # RabbitMQ Metrics
+  - job_name: 'rabbitmq'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['rabbitmq:15692']
+        labels:
+          application: 'rabbitmq'

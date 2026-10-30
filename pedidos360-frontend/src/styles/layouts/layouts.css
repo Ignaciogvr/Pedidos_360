@@ -1,0 +1,120 @@
+/* Layout Utility Classes
+ * Provides container, grid, flexbox, and gap utilities for responsive layouts
+ */
+
+/* Container */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--spacing-md);
+  padding-right: var(--spacing-md);
+}
+
+/* Grid Layouts */
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-md);
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-md);
+}
+
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-md);
+}
+
+/* Flexbox Utilities */
+.flex {
+  display: flex;
+}
+
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+/* Gap Utilities */
+.gap-xs {
+  gap: var(--spacing-xs);
+}
+
+.gap-sm {
+  gap: var(--spacing-sm);
+}
+
+.gap-md {
+  gap: var(--spacing-md);
+}
+
+.gap-lg {
+  gap: var(--spacing-lg);
+}
+
+.gap-xl {
+  gap: var(--spacing-xl);
+}
+
+/* Mobile Responsive Rules */
+@media (max-width: 768px) {
+  .container {
+    padding-left: var(--spacing-sm);
+    padding-right: var(--spacing-sm);
+  }
+
+  /* Collapse grids to single column on mobile */
+  .grid-2,
+  .grid-3,
+  .grid-4 {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
+  }
+
+  /* Allow grid-2 to remain 2 columns if needed with explicit class */
+  .grid-2.keep-columns {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Stack flex layouts vertically on mobile */
+  .flex-between,
+  .flex-center {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  /* Reduce gaps on mobile */
+  .gap-md {
+    gap: var(--spacing-sm);
+  }
+
+  .gap-lg {
+    gap: var(--spacing-md);
+  }
+
+  .gap-xl {
+    gap: var(--spacing-lg);
+  }
+}

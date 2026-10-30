@@ -1,0 +1,54 @@
+﻿server:
+  port: 8081
+
+spring:
+  application:
+    name: pedidos360-ordenes
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://sts.windows.net/b6f34517-563c-4ce9-a10b-6f3958083091/
+          jwk-set-uri: https://login.microsoftonline.com/b6f34517-563c-4ce9-a10b-6f3958083091/discovery/v2.0/keys
+          audiences: api://3bdb2628-3745-4907-9593-53d8c7cb36fb
+
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER:guest}
+    password: ${RABBITMQ_PASS:guest}
+
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/ordenesdb?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${DB_USERNAME:pedidos360}
+    password: ${DB_PASSWORD:Pedidos360Pass!}
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus, health, info, metrics
+  endpoint:
+    prometheus:
+      enabled: true
+    health:
+      show-details: always
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+

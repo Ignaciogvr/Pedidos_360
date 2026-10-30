@@ -1,0 +1,38 @@
+.glass-card {
+  background: rgba(18, 18, 31, 0.7);
+  backdrop-filter: blur(10px);
+  border: var(--border-width) solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-base);
+}
+
+.glass-card:hover {
+  background: rgba(26, 26, 46, 0.7);
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  border-bottom: var(--border-width) solid var(--border-color);
+}
+
+.card-body {
+  padding: var(--spacing-md) 0;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--spacing-md);
+  margin-top: var(--spacing-md);
+  border-top: var(--border-width) solid var(--border-color);
+}

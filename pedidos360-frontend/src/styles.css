@@ -1,0 +1,275 @@
+/* ═══════════════════════════════════════════════════
+   Pedidos360 - Main Styles
+   Architecture: Design System with Modular CSS
+   ═══════════════════════════════════════════════════ */
+
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* Design System - Layer 1: Design Tokens */
+@import 'styles/tokens/tokens.css';
+
+/* Design System - Layer 2: Base Styles */
+@import 'styles/base/reset.css';
+
+/* Design System - Layer 3: Component Styles */
+@import 'styles/components/components.css';
+
+/* Design System - Layer 4: Layout Utilities */
+@import 'styles/layouts/layouts.css';
+
+/* Design System - Layer 5: Utility Classes */
+@import 'styles/utilities/utilities.css';
+
+/* ═══════════════════════════════════════════════════
+   Application-Specific Styles
+   These styles are unique to the application and cannot
+   be generalized into the design system.
+   ═══════════════════════════════════════════════════ */
+
+/* ── SPLASH SCREEN ── */
+.splash-screen {
+  position: fixed; 
+  inset: 0; 
+  background: var(--bg-main);
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  justify-content: center;
+  gap: var(--spacing-lg); 
+  z-index: 9999;
+}
+
+.splash-logo {
+  font-size: 2rem; 
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  -webkit-background-clip: text; 
+  -webkit-text-fill-color: transparent; 
+  background-clip: text;
+}
+
+.splash-spinner {
+  width: 40px; 
+  height: 40px;
+  border: 3px solid rgba(99, 102, 241, 0.2); 
+  border-top-color: var(--color-primary);
+  border-radius: var(--radius-full); 
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.splash-text { 
+  font-size: 0.88rem; 
+  color: var(--text-muted); 
+}
+
+/* ── APP CONTAINER ── */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ── MAIN CONTENT ── */
+.main-content {
+  flex: 1;
+  padding: var(--spacing-xl);
+  max-width: 1280px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ── WELCOME SCREEN ── */
+.welcome-screen {
+  text-align: center;
+  margin-top: 5rem;
+  background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  padding: 4rem 3rem;
+  border-radius: var(--radius-xl);
+  border: var(--border-width) solid var(--border-color);
+  box-shadow: var(--shadow-xl);
+}
+
+.welcome-badge {
+  display: inline-block;
+  background: rgba(99, 102, 241, 0.15); 
+  color: var(--color-secondary);
+  border: var(--border-width) solid rgba(99, 102, 241, 0.3);
+  padding: 0.3rem 1rem; 
+  border-radius: var(--radius-full);
+  font-size: 0.8rem; 
+  font-weight: 600; 
+  margin-bottom: var(--spacing-md);
+}
+
+.welcome-screen h1 {
+  font-size: 2.8rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--text-main), var(--color-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: var(--spacing-md);
+  letter-spacing: -0.03em;
+}
+
+.welcome-screen p { 
+  color: var(--text-muted); 
+  font-size: 1.05rem; 
+  margin-bottom: var(--spacing-xl); 
+}
+
+/* ── NAVBAR ── */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md) var(--spacing-xl);
+  background: rgba(15, 15, 26, 0.7);
+  backdrop-filter: blur(12px);
+  border-bottom: var(--border-width) solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.brand {
+  font-size: 1.4rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--text-main), var(--color-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.05em;
+}
+
+.nav-links {
+  display: flex;
+  gap: var(--spacing-lg);
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-base);
+}
+
+.nav-links a:hover { 
+  background: rgba(255, 255, 255, 0.05); 
+  color: var(--text-main); 
+}
+
+.nav-links a.active { 
+  background: rgba(99, 102, 241, 0.15); 
+  color: var(--color-secondary); 
+}
+
+.auth-section { 
+  display: flex; 
+  align-items: center; 
+  gap: var(--spacing-lg); 
+}
+
+.user-profile { 
+  display: flex; 
+  align-items: center; 
+  gap: var(--spacing-md); 
+}
+
+.user-avatar {
+  width: 36px; 
+  height: 36px; 
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  font-weight: 700; 
+  font-size: 0.9rem; 
+  color: white; 
+  flex-shrink: 0;
+  text-decoration: none; 
+  cursor: pointer;
+  transition: box-shadow var(--transition-base); 
+  border: 2px solid transparent;
+}
+
+.user-avatar:hover { 
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.4); 
+}
+
+.user-info { 
+  display: flex; 
+  flex-direction: column; 
+  align-items: flex-end; 
+}
+
+.user-name { 
+  font-weight: 600; 
+  font-size: 0.9rem; 
+  color: var(--text-main); 
+}
+
+.user-role {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.15rem var(--spacing-sm);
+  border-radius: var(--radius-lg);
+  margin-top: 0.2rem;
+}
+
+.role-Admin { 
+  background: rgba(99, 102, 241, 0.2); 
+  color: var(--color-secondary); 
+  border: var(--border-width) solid rgba(167, 139, 250, 0.3); 
+}
+
+.role-Operador { 
+  background: rgba(59, 130, 246, 0.2); 
+  color: #93c5fd; 
+  border: var(--border-width) solid rgba(147, 197, 253, 0.3); 
+}
+
+.role-Cliente { 
+  background: rgba(16, 185, 129, 0.2); 
+  color: #6ee7b7; 
+  border: var(--border-width) solid rgba(110, 231, 183, 0.3); 
+}
+
+/* ── RESPONSIVE ADJUSTMENTS ── */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+  }
+
+  .nav-links {
+    flex-direction: column;
+    width: 100%;
+    text-align: center;
+  }
+
+  .main-content {
+    padding: var(--spacing-md);
+  }
+
+  .welcome-screen {
+    padding: var(--spacing-xl) var(--spacing-md);
+  }
+
+  .welcome-screen h1 {
+    font-size: 2rem;
+  }
+}

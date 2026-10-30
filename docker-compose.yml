@@ -1,0 +1,85 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: rabbitmq-pedidos360
+    hostname: rabbitmq-host
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+      - "15692:15692"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS:-guest}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - pedidos360-network
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-pedidos360
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpass}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-pedidos360}
+      MYSQL_USER: ${DB_USERNAME:-pedidos360}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-Pedidos360Pass!}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-rootpass}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - pedidos360-network
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus-pedidos360
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    depends_on:
+      - rabbitmq
+    networks:
+      - pedidos360-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana-pedidos360
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASS:-admin}
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    networks:
+      - pedidos360-network
+
+volumes:
+  mysql_data:
+    name: pedidos360_mysql_data
+  prometheus_data:
+    name: pedidos360_prometheus_data
+  grafana_data:
+    name: pedidos360_grafana_data
+  rabbitmq_data:
+    name: pedidos360_rabbitmq_data
+
+networks:
+  pedidos360-network:
+    driver: bridge
+    name: pedidos360-network

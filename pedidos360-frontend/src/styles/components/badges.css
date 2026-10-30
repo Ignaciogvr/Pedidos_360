@@ -1,0 +1,132 @@
+/* ========================================
+   Badge Component Styles
+   ======================================== */
+
+/* Base badge class - shared styling for all badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+}
+
+/* Badge variants - color schemes */
+.badge-primary {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  color: var(--text-main);
+  box-shadow: 0 0 12px rgba(99, 102, 241, 0.3);
+}
+
+.badge-success {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--color-success);
+  border: var(--border-width) solid var(--color-success);
+}
+
+.badge-warning {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--color-warning);
+  border: var(--border-width) solid var(--color-warning);
+}
+
+.badge-danger {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--color-danger);
+  border: var(--border-width) solid var(--color-danger);
+}
+
+/* Status badge - base class for order status indicators */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: var(--border-width) solid transparent;
+  transition: all var(--transition-base);
+}
+
+/* Order status classes - specific states */
+.status-badge.pendiente {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--color-warning);
+  border-color: var(--color-warning);
+}
+
+.status-badge.pendiente::before {
+  content: '⏳';
+  font-size: 1rem;
+}
+
+.status-badge.en_proceso {
+  background: rgba(59, 130, 246, 0.15);
+  color: var(--color-info);
+  border-color: var(--color-info);
+}
+
+.status-badge.en_proceso::before {
+  content: '🔄';
+  font-size: 1rem;
+}
+
+.status-badge.completado {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--color-success);
+  border-color: var(--color-success);
+}
+
+.status-badge.completado::before {
+  content: '✅';
+  font-size: 1rem;
+}
+
+.status-badge.cancelado {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--color-danger);
+  border-color: var(--color-danger);
+}
+
+.status-badge.cancelado::before {
+  content: '🚫';
+  font-size: 1rem;
+}
+
+/* Hover effects for interactive badges */
+.badge:hover,
+.status-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Size variants for badges */
+.badge-sm {
+  font-size: 0.625rem;
+  padding: 0.125rem var(--spacing-xs);
+}
+
+.badge-lg {
+  font-size: 0.875rem;
+  padding: var(--spacing-sm) var(--spacing-md);
+}
+
+/* Badge with icon support */
+.badge-with-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.badge-with-icon .badge-icon {
+  font-size: 1rem;
+  line-height: 1;
+}

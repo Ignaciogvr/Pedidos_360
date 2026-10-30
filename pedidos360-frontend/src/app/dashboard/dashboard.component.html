@@ -1,0 +1,44 @@
+﻿<div class="dash-page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">📊 Panel de Control</h1>
+      <p class="page-subtitle">Resumen en tiempo real del sistema Pedidos360</p>
+    </div>
+  </div>
+
+  <div class="stats-grid" *ngIf="!loading()">
+    <app-stat-card
+      title="Total Pedidos"
+      [value]="stats().total"
+      icon="📦"
+      variant="primary"
+      [loading]="loading()">
+    </app-stat-card>
+    
+    <app-stat-card
+      title="Pendientes"
+      [value]="stats().pendientes"
+      icon="⏳"
+      variant="warning"
+      [loading]="loading()">
+    </app-stat-card>
+    
+    <app-stat-card
+      title="En Proceso"
+      [value]="stats().enProceso"
+      icon="🔄"
+      variant="default"
+      [loading]="loading()">
+    </app-stat-card>
+    
+    <app-stat-card
+      title="Completados"
+      [value]="stats().completados"
+      icon="✅"
+      variant="success"
+      [loading]="loading()">
+    </app-stat-card>
+  </div>
+
+  <app-token-display [claims]="tokenInfo" title="📊 Claims del Token JWT (Azure)"></app-token-display>
+</div>

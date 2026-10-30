@@ -1,0 +1,10 @@
+C:\Users\nacho\Desktop\cloud\Pedidos_360-main\pedidos360-mensajeria\src\main\java\com\example\pedidos360_mensajeria\config\RabbitAdminConfig.java
+C:\Users\nacho\Desktop\cloud\Pedidos_360-main\pedidos360-mensajeria\src\main\java\com\example\pedidos360_mensajeria\config\RabbitConfig.java
+C:\Users\nacho\Desktop\cloud\Pedidos_360-main\pedidos360-mensajeria\src\main\java\com\example\pedidos360_mensajeria\config\SecurityConfig.java
+C:\Users\nacho\Desktop\cloud\Pedidos_360-main\pedidos360-mensajeria\src\main\java\com\example\pedidos360_mensajeria\consumer\DominioConsumers.java
+C:\Users\nacho\Desktop\cloud\Pedidos_360-main\pedidos360-mensajeria\src\main\java\com\example\pedidos360_mensajeria\consumer\MonitoreoConsumer.java
+C:\Users\nacho\Desktop\cloud\Pedidos_360-main\pedidos360-mensajeria\src\main\java\com\example\pedidos360_mensajeria\consumer\ProcesadorMensajes.java
+C:\Users\nacho\Desktop\cloud\Pedidos_360-main\pedidos360-mensajeria\src\main\java\com\example\pedidos360_mensajeria\controller\RabbitMQController.java
+C:\Users\nacho\Desktop\cloud\Pedidos_360-main\pedidos360-mensajeria\src\main\java\com\example\pedidos360_mensajeria\exception\GlobalExceptionHandler.java
+C:\Users\nacho\Desktop\cloud\Pedidos_360-main\pedidos360-mensajeria\src\main\java\com\example\pedidos360_mensajeria\Pedidos360MensajeriaApplication.java
+C:\Users\nacho\Desktop\cloud\Pedidos_360-main\pedidos360-mensajeria\src\main\java\com\example\pedidos360_mensajeria\service\RabbitAdminService.java

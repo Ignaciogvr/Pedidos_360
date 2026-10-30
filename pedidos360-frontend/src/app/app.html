@@ -1,0 +1,67 @@
+<div class="app-container">
+  <ng-container>
+    <nav class="navbar">
+      <div class="brand">⚡ Pedidos360</div>
+
+      <div class="nav-links" *ngIf="isAuthenticated()">
+        <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+        <a routerLink="/orders" routerLinkActive="active">Pedidos</a>
+        <a routerLink="/catalog" routerLinkActive="active">Catálogo</a>
+        <a *ngIf="user() && (user()!.roles.includes('Admin') || user()!.roles.includes('ADMIN'))" 
+           routerLink="/admin/users" 
+           routerLinkActive="active" 
+           class="admin-link">
+          👥 Usuarios
+        </a>
+      </div>
+
+      <div class="auth-section">
+        <ng-container *ngIf="!isAuthenticated()">
+          <button class="btn btn-primary" (click)="login()">Iniciar Sesión</button>
+        </ng-container>
+
+        <ng-container *ngIf="isAuthenticated() && user()">
+          <div class="user-profile">
+            <div class="user-info">
+              <span class="user-name">{{ user()!.name }}</span>
+              <app-role-badge 
+                *ngIf="user()!.roles.length > 0" 
+                [role]="user()!.roles[0]" 
+                size="sm">
+              </app-role-badge>
+            </div>
+            <app-user-avatar 
+              [name]="user()!.name" 
+              size="md" 
+              [clickable]="true"
+              routerLink="/profile"
+              style="cursor: pointer;">
+            </app-user-avatar>
+            <button class="btn btn-outline" (click)="logout()">Salir</button>
+          </div>
+        </ng-container>
+      </div>
+    </nav>
+
+    <main class="main-content">
+      <ng-container *ngIf="!isAuthenticated()">
+        <div class="welcome-screen">
+          <div class="welcome-badge">🔒 Plataforma corporativa segura</div>
+          <h1>Bienvenido a Pedidos360</h1>
+          <p>Gestiona tus pedidos de forma segura con autenticación corporativa de Microsoft Azure Entra ID.</p>
+          <button class="btn btn-primary btn-large" (click)="login()">
+            <svg width="20" height="20" viewBox="0 0 21 21" fill="none" style="display:inline;vertical-align:middle;margin-right:8px">
+              <rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/>
+              <rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/>
+            </svg>
+            Ingresar con Microsoft
+          </button>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="isAuthenticated()">
+        <router-outlet></router-outlet>
+      </ng-container>
+    </main>
+  </ng-container>
+</div>

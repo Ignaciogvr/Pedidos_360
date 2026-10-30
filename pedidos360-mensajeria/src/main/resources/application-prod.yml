@@ -1,0 +1,21 @@
+﻿spring:
+  rabbitmq:
+    host: ${RABBITMQ_HOST}
+    port: ${RABBITMQ_PORT}
+    username: ${RABBITMQ_USER}
+    password: ${RABBITMQ_PASS}
+
+logging:
+  level:
+    root: INFO
+    com.example.pedidos360_mensajeria: INFO
+  file:
+    name: /var/log/pedidos360/mensajeria.log
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      max-history: 30
+      total-size-cap: 1GB
+      file-name-pattern: /var/log/pedidos360/mensajeria-%d{yyyy-MM-dd}.%i.log.gz
+  pattern:
+    file: '%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n'

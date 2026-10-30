@@ -1,0 +1,142 @@
+<div class="products-page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">📦 Catálogo de Productos</h1>
+      <p class="page-subtitle">{{ canManageCatalog ? 'Gestiona el catálogo completo' : 'Selecciona productos para tu pedido' }}</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-cart" (click)="mostrarCarrito.set(true)">
+        🛒 Carrito
+        <span class="cart-count" *ngIf="cart.totalItems() > 0">{{ cart.totalItems() }}</span>
+      </button>
+      <button *ngIf="canManageCatalog" class="btn-primary" (click)="toggleFormulario()">
+        {{ mostrarFormulario() ? '❌ Cancelar' : '➕ Nuevo Producto' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Formulario Admin -->
+  <div class="glass-card create-form" *ngIf="mostrarFormulario() && canManageCatalog">
+    <h3 class="form-title">{{ editando() ? '✏️ Editar Producto' : '✨ Agregar Producto al Catálogo' }}</h3>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Nombre *</label>
+        <input type="text" [(ngModel)]="form.nombre" placeholder="Laptop Pro X" class="form-input" required />
+      </div>
+      <div class="form-group">
+        <label>Categoría</label>
+        <select [(ngModel)]="form.categoria" class="form-input">
+          <option value="Computación">Computación</option>
+          <option value="Periféricos">Periféricos</option>
+          <option value="Audio">Audio</option>
+          <option value="Móviles">Móviles</option>
+          <option value="Accesorios">Accesorios</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Precio (CLP \$) *</label>
+        <input type="number" [(ngModel)]="form.precio" placeholder="0" class="form-input" min="1" required />
+      </div>
+      <div class="form-group">
+        <label>Stock</label>
+        <input type="number" [(ngModel)]="form.stock" placeholder="0" class="form-input" min="0" />
+      </div>
+      <div class="form-group form-group-full">
+        <label>Descripción</label>
+        <input type="text" [(ngModel)]="form.descripcion" placeholder="Breve descripción..." class="form-input" />
+      </div>
+      <div class="form-group form-group-full">
+        <label>URL Imagen (opcional)</label>
+        <input type="text" [(ngModel)]="form.imagen" placeholder="https://..." class="form-input" />
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn-primary" (click)="agregarProducto()" [disabled]="!form.nombre || !form.precio || form.precio <= 0">
+        {{ editando() ? '💾 Actualizar Producto' : '💾 Guardar Producto' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Filtros -->
+  <div class="glass-card filters-bar">
+    <span class="filter-label">Categoría:</span>
+    <button *ngFor="let cat of categorias; trackBy: trackByCategory" class="filter-btn" [class.active]="categoriaActiva() === cat" (click)="categoriaActiva.set(cat)">
+      {{ cat }}
+    </button>
+  </div>
+
+  <!-- Grid de productos -->
+  <div class="products-grid">
+    <app-product-card 
+      *ngFor="let p of productosFiltrados(); trackBy: trackByProductId"
+      [producto]="p"
+      [showAdminControls]="canManageCatalog"
+      [showDeleteButton]="canManageCatalog"
+      [showEditButton]="canManageCatalog"
+      (addToCart)="agregarAlCarrito($event)"
+      (stockChange)="ajustarStock($event.id, $event.amount)"
+      (delete)="eliminarProducto($event)"
+      (edit)="editarProducto($event)">
+    </app-product-card>
+
+    <div class="empty-state" *ngIf="productosFiltrados().length === 0">
+      <span class="empty-icon">📭</span>
+      <p>No hay productos en esta categoría</p>
+    </div>
+  </div>
+
+  <!-- Modal Carrito -->
+  <app-cart-modal
+    [isOpen]="mostrarCarrito()"
+    [items]="cart.items()"
+    [totalPrice]="cart.totalPrecio()"
+    (onClose)="mostrarCarrito.set(false)"
+    (increase)="cart.agregar({id: $event, nombre: '', precio: 0, imagen: '', stockMax: 999})"
+    (decrease)="cart.quitar($event)"
+    (remove)="cart.eliminar($event)"
+    (clear)="cart.vaciar()"
+    (checkout)="irAPagar()">
+  </app-cart-modal>
+
+  <!-- Modal Pago -->
+  <app-modal 
+    [isOpen]="mostrarPago()" 
+    [title]="pagoExitoso() ? '✅ ¡Pago exitoso!' : '💳 Pago Simulado'"
+    (onClose)="cerrarPago()">
+    <div *ngIf="!pagoExitoso()">
+      <div class="form-group">
+        <label>Nombre en la tarjeta</label>
+        <input type="text" [(ngModel)]="card.nombre" placeholder="Juan Pérez" class="form-input" />
+      </div>
+      <div class="form-group">
+        <label>Número de tarjeta</label>
+        <input type="text" [(ngModel)]="card.numero" placeholder="1234 5678 9012 3456" class="form-input" />
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Vencimiento</label>
+          <input type="text" [(ngModel)]="card.vencimiento" placeholder="MM/AA" class="form-input" />
+        </div>
+        <div class="form-group">
+          <label>CVV</label>
+          <input type="text" [(ngModel)]="card.cvv" placeholder="123" class="form-input" maxlength="3" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="cerrarPago()">Cancelar</button>
+        <button class="btn-primary" (click)="confirmarPago()" [disabled]="procesando()">
+          {{ procesando() ? '⏳ Procesando...' : '💳 Confirmar Pago' }}
+        </button>
+      </div>
+    </div>
+    <div *ngIf="pagoExitoso()">
+      <p style="text-align: center; padding: 2rem;">
+        ✅ Tu pedido ha sido procesado exitosamente
+      </p>
+      <button class="btn-primary" (click)="cerrarPago()" style="width: 100%;">Cerrar</button>
+    </div>
+  </app-modal>
+
+</div>

@@ -1,0 +1,24 @@
+/**
+ * Components CSS - Consolidated Import
+ * 
+ * This file imports all component-specific styles in the design system.
+ * Import this file in your main styles.css to include all component styles.
+ * 
+ * Organization:
+ * - buttons.css: Button variants and states
+ * - cards.css: Card containers and layouts
+ * - forms.css: Form inputs, labels, and validation
+ * - badges.css: Badge variants and status indicators
+ */
+
+/* Button Component Styles */
+@import './buttons.css';
+
+/* Card Component Styles */
+@import './cards.css';
+
+/* Form Component Styles */
+@import './forms.css';
+
+/* Badge Component Styles */
+@import './badges.css';

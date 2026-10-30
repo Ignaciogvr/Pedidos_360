@@ -1,0 +1,29 @@
+<div class="users-page">
+  <div class="page-header">
+    <h1>Administración de Usuarios</h1>
+    <p>Gestiona roles y permisos de usuarios del sistema</p>
+  </div>
+  <div *ngIf="cargando()" class="loading"><div class="spinner"></div><p>Cargando usuarios...</p></div>
+  <div *ngIf="error()" class="error-message">{{ error() }}<button (click)="cargarUsuarios()">Reintentar</button></div>
+  <div *ngIf="!cargando() && !error()" class="glass-card">
+    <table class="users-table">
+      <thead><tr><th>Email</th><th>Nombre</th><th>Rol</th><th>Estado</th><th>Fecha Registro</th><th>Acciones</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let usuario of usuarios()" [class.suspended]="!usuario.activo">
+          <td>{{ usuario.email }}</td>
+          <td>{{ usuario.nombre }}</td>
+          <td><span [class]="getRolBadgeClass(usuario.rol)" class="badge">{{ usuario.rol }}</span></td>
+          <td><span [class]="usuario.activo ? 'status-active' : 'status-suspended'">{{ usuario.activo ? 'Activo' : 'Suspendido' }}</span></td>
+          <td>{{ usuario.fechaRegistro | date:'dd/MM/yyyy HH:mm' }}</td>
+          <td class="actions">
+            <button *ngIf="puedeEditar(usuario)" class="btn-change-rol" (click)="cambiarRol(usuario)">Cambiar Rol</button>
+            <button *ngIf="usuario.activo && puedeEditar(usuario)" class="btn-suspend" (click)="suspender(usuario)">Suspender</button>
+            <button *ngIf="!usuario.activo && puedeEditar(usuario)" class="btn-activate" (click)="activar(usuario)">Activar</button>
+            <span *ngIf="!puedeEditar(usuario)" class="no-edit">No editable</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div *ngIf="usuarios().length === 0" class="empty-state"><span class="empty-icon">No hay usuarios</span></div>
+  </div>
+</div>

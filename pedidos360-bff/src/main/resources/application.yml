@@ -1,0 +1,44 @@
+﻿server:
+  port: 8080
+
+spring:
+  application:
+    name: pedidos360-bff
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://sts.windows.net/b6f34517-563c-4ce9-a10b-6f3958083091/
+          jwk-set-uri: https://login.microsoftonline.com/b6f34517-563c-4ce9-a10b-6f3958083091/discovery/v2.0/keys
+          audiences: api://3bdb2628-3745-4907-9593-53d8c7cb36fb
+
+# Service URLs Configuration
+ordenes:
+  service:
+    url: ${ORDENES_SERVICE_URL:http://localhost:8081/api/pedidos}
+
+catalogo:
+  service:
+    url: ${CATALOGO_SERVICE_URL:http://localhost:8082/api/catalogo}
+
+# Management Endpoints Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus, health, info, metrics
+  endpoint:
+    prometheus:
+      enabled: true
+    health:
+      show-details: always
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.web.client: DEBUG
+    com.example.pedidos360_bff: DEBUG

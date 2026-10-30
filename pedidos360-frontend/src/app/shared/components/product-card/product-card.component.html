@@ -1,0 +1,27 @@
+<div class="product-card" [class.sin-stock]="producto.stock === 0">
+  <div class="product-img-wrapper">
+    <img [src]="producto.imagen" [alt]="producto.nombre" class="product-img" loading="lazy" />
+    <span class="product-category">{{ producto.categoria }}</span>
+    <span class="stock-badge" [class.agotado]="producto.stock === 0">
+      {{ producto.stock === 0 ? 'Agotado' : 'Stock: ' + producto.stock }}
+    </span>
+  </div>
+  <div class="product-body">
+    <h3 class="product-name">{{ producto.nombre }}</h3>
+    <p class="product-desc">{{ producto.descripcion }}</p>
+    <div class="product-footer">
+      <span class="product-price">${{ producto.precio | number }}</span>
+      <div class="product-actions">
+        <div class="stock-admin" *ngIf="showAdminControls">
+          <button class="btn-stock" (click)="onStockChange(-1)" [disabled]="producto.stock === 0">-1</button>
+          <button class="btn-stock" (click)="onStockChange(1)">+1</button>
+        </div>
+        <button *ngIf="showEditButton" class="btn-edit" (click)="onEdit()">Edit</button>
+        <button *ngIf="showDeleteButton" class="btn-danger" (click)="onDelete()">Del</button>
+        <button class="btn-add-cart" (click)="onAddToCart()" [disabled]="producto.stock === 0">
+          {{ producto.stock === 0 ? 'Agotado' : 'Agregar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
