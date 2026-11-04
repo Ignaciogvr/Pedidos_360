@@ -29,6 +29,16 @@ export class ProductCardComponent {
   @Output() delete = new EventEmitter<number>();
   @Output() edit = new EventEmitter<number>();
 
+  imgError = false;
+
+  getCatEmoji(): string {
+    const map: Record<string, string> = {
+      'Computación': '💻', 'Periféricos': '⌨️', 'Audio': '🎧',
+      'Móviles': '📱', 'Accesorios': '🎒'
+    };
+    return map[this.producto?.categoria] || '📦';
+  }
+
   onAddToCart() {
     if (this.producto.stock > 0) {
       this.addToCart.emit(this.producto);

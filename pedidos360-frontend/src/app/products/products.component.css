@@ -22,11 +22,28 @@
 .form-input option { background: #1e1e35; }
 .form-actions { margin-top: 1.2rem; }
 
-.filters-bar { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; padding: 1rem 1.5rem; }
-.filter-label { font-size: 0.8rem; color: #64748b; font-weight: 600; text-transform: uppercase; margin-right: 0.5rem; }
-.filter-btn { background: transparent; border: 1px solid rgba(255,255,255,0.1); color: #94a3b8; padding: 0.3rem 0.9rem; border-radius: 20px; font-size: 0.82rem; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+/* Stats bar */
+.catalog-stats { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+.cat-stat { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 0.6rem 1.1rem; display: flex; flex-direction: column; align-items: center; min-width: 80px; }
+.cat-stat-num { font-size: 1.3rem; font-weight: 900; color: #a78bfa; line-height: 1; }
+.cat-stat-label { font-size: 0.65rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.1rem; }
+.cat-stat-green .cat-stat-num { color: #34d399; }
+.cat-stat-yellow .cat-stat-num { color: #fbbf24; }
+.cat-stat-red .cat-stat-num { color: #f87171; }
+.catalog-search { display: flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 0.4rem 0.8rem; margin-left: auto; min-width: 220px; }
+.search-icon { font-size: 0.9rem; color: #64748b; flex-shrink: 0; }
+.search-input { background: transparent; border: none; color: #f1f5f9; font-size: 0.88rem; outline: none; flex: 1; min-width: 0; }
+.search-input::placeholder { color: #475569; }
+.search-clear { background: none; border: none; color: #64748b; cursor: pointer; font-size: 0.85rem; padding: 0; line-height: 1; }
+.search-clear:hover { color: #f87171; }
+
+/* Filters */
+.filters-bar { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; padding: 0.75rem 1.2rem; }
+.filter-label { font-size: 0.75rem; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-right: 0.25rem; }
+.filter-btn { background: transparent; border: 1px solid rgba(255,255,255,0.1); color: #94a3b8; padding: 0.3rem 0.9rem; border-radius: 20px; font-size: 0.82rem; font-weight: 500; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.3rem; }
 .filter-btn:hover { background: rgba(255,255,255,0.07); color: #f1f5f9; }
 .filter-btn.active { background: rgba(99,102,241,0.2); border-color: rgba(99,102,241,0.5); color: #a78bfa; font-weight: 700; }
+.results-count { margin-left: auto; font-size: 0.78rem; color: #64748b; font-style: italic; }
 
 .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.2rem; }
 

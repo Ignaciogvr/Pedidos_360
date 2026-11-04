@@ -56,6 +56,7 @@ export class ProductsComponent implements OnInit {
 
   categorias = ['Todos', 'Computación', 'Periféricos', 'Audio', 'Móviles', 'Accesorios'];
   productos = signal<Producto[]>([]);
+  searchQuery = signal('');
 
   ngOnInit() {
     this.canManageCatalog = this.permissionService.canManageCatalog();
@@ -91,8 +92,22 @@ export class ProductsComponent implements OnInit {
 
   productosFiltrados() {
     const cat = this.categoriaActiva();
-    if (cat === 'Todos') return this.productos();
-    return this.productos().filter(p => p.categoria === cat);
+    const q = this.searchQuery().toLowerCase().trim();
+    return this.productos().filter(p => {
+      const catOk = cat === 'Todos' || p.categoria === cat;
+      const searchOk = !q || p.nombre.toLowerCase().includes(q) || p.descripcion?.toLowerCase().includes(q);
+      return catOk && searchOk;
+    });
+  }
+
+  catalogStats() {
+    const ps = this.productos();
+    return {
+      total: ps.length,
+      enStock: ps.filter(p => p.stock > 0).length,
+      agotados: ps.filter(p => p.stock === 0).length,
+      stockCritico: ps.filter(p => p.stock > 0 && p.stock < 5).length
+    };
   }
 
   toggleFormulario() {
@@ -311,5 +326,13 @@ export class ProductsComponent implements OnInit {
 
   trackByCategory(index: number, categoria: string): string {
     return categoria;
+  }
+
+  getCatIcon(cat: string): string {
+    const map: Record<string, string> = {
+      'Todos': '🏷️', 'Computación': '💻', 'Periféricos': '⌨️',
+      'Audio': '🎧', 'Móviles': '📱', 'Accesorios': '🎒'
+    };
+    return map[cat] || '';
   }
 }

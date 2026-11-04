@@ -68,12 +68,43 @@
     </div>
   </div>
 
-  <!-- Filtros -->
+  <!-- Stats bar -->
+  <div class="catalog-stats">
+    <div class="cat-stat">
+      <span class="cat-stat-num">{{ catalogStats().total }}</span>
+      <span class="cat-stat-label">Productos</span>
+    </div>
+    <div class="cat-stat cat-stat-green">
+      <span class="cat-stat-num">{{ catalogStats().enStock }}</span>
+      <span class="cat-stat-label">En Stock</span>
+    </div>
+    <div class="cat-stat cat-stat-yellow" *ngIf="catalogStats().stockCritico > 0">
+      <span class="cat-stat-num">{{ catalogStats().stockCritico }}</span>
+      <span class="cat-stat-label">Stock Crítico</span>
+    </div>
+    <div class="cat-stat cat-stat-red" *ngIf="catalogStats().agotados > 0">
+      <span class="cat-stat-num">{{ catalogStats().agotados }}</span>
+      <span class="cat-stat-label">Agotados</span>
+    </div>
+    <div class="catalog-search">
+      <span class="search-icon">🔍</span>
+      <input type="text" [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)"
+        placeholder="Buscar productos..." class="search-input" />
+      <button class="search-clear" *ngIf="searchQuery()" (click)="searchQuery.set('')">✕</button>
+    </div>
+  </div>
+
+  <!-- Filtros categoria -->
   <div class="glass-card filters-bar">
     <span class="filter-label">Categoría:</span>
-    <button *ngFor="let cat of categorias; trackBy: trackByCategory" class="filter-btn" [class.active]="categoriaActiva() === cat" (click)="categoriaActiva.set(cat)">
-      {{ cat }}
+    <button *ngFor="let cat of categorias; trackBy: trackByCategory"
+      class="filter-btn" [class.active]="categoriaActiva() === cat"
+      (click)="categoriaActiva.set(cat)">
+      {{ getCatIcon(cat) }} {{ cat }}
     </button>
+    <span class="results-count" *ngIf="searchQuery()">
+      {{ productosFiltrados().length }} resultado(s)
+    </span>
   </div>
 
   <!-- Grid de productos -->

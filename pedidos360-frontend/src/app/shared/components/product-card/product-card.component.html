@@ -1,17 +1,30 @@
 <div class="product-card" [class.sin-stock]="producto.stock === 0">
+
+  <!-- Imagen con fallback -->
   <div class="product-img-wrapper">
-    <img [src]="producto.imagen" [alt]="producto.nombre" class="product-img" loading="lazy" />
+    <img *ngIf="producto.imagen && !imgError"
+      [src]="producto.imagen" [alt]="producto.nombre"
+      class="product-img" loading="lazy"
+      (error)="imgError = true" />
+    <div *ngIf="!producto.imagen || imgError" class="product-img-placeholder">
+      <span>{{ getCatEmoji() }}</span>
+    </div>
     <span class="product-category">{{ producto.categoria }}</span>
-    <span class="stock-badge" [class.agotado]="producto.stock === 0">
-      {{ producto.stock === 0 ? 'Agotado' : producto.stock + ' en stock' }}
+    <span class="stock-badge" [class.agotado]="producto.stock === 0" [class.stock-low]="producto.stock > 0 && producto.stock < 5">
+      {{ producto.stock === 0 ? '❌ Agotado' : producto.stock < 5 ? '⚠️ ' + producto.stock + ' restantes' : '✓ ' + producto.stock + ' en stock' }}
     </span>
   </div>
+
+  <!-- Body -->
   <div class="product-body">
     <h3 class="product-name">{{ producto.nombre }}</h3>
-    <p class="product-desc">{{ producto.descripcion }}</p>
+    <p class="product-desc">{{ producto.descripcion || 'Sin descripción' }}</p>
+
     <div class="product-price-row">
       <span class="product-price">${{ producto.precio | number }}</span>
     </div>
+
+    <!-- Admin controls -->
     <div class="admin-controls" *ngIf="showAdminControls || showEditButton || showDeleteButton">
       <div class="stock-admin" *ngIf="showAdminControls">
         <button class="btn-stock" (click)="onStockChange(-1)" [disabled]="producto.stock === 0">−</button>
@@ -20,9 +33,11 @@
       </div>
       <div class="admin-btns">
         <button *ngIf="showEditButton" class="btn-edit" (click)="onEdit()">✏️ Editar</button>
-        <button *ngIf="showDeleteButton" class="btn-danger" (click)="onDelete()">🗑️</button>
+        <button *ngIf="showDeleteButton" class="btn-delete" (click)="onDelete()">🗑️</button>
       </div>
     </div>
+
+    <!-- Carrito button -->
     <button class="btn-add-cart" (click)="onAddToCart()" [disabled]="producto.stock === 0">
       {{ producto.stock === 0 ? '❌ Sin stock' : '🛒 Agregar al carrito' }}
     </button>
