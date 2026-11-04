@@ -44,6 +44,8 @@ export class ProductsComponent implements OnInit {
   procesando = signal(false);
   editando = signal(false);
   productoEditId = signal<number | null>(null);
+  errorMensaje = signal<string | null>(null);
+  errorPago = signal<string | null>(null);
 
   form = { nombre: '', descripcion: '', precio: 0, stock: 0, categoria: 'Computación', imagen: '' };
   card = { nombre: '', numero: '', vencimiento: '', cvv: '' };
@@ -159,7 +161,8 @@ export class ProductsComponent implements OnInit {
         },
         error: (err) => {
           console.error('Error actualizando producto:', err);
-          alert('Error al actualizar producto');
+          const msg = err?.error?.message || err?.error?.producto || err?.message || 'Error al actualizar producto';
+          this.errorMensaje.set(msg);
         }
       });
     } else {
@@ -173,7 +176,8 @@ export class ProductsComponent implements OnInit {
         },
         error: (err) => {
           console.error('Error creando producto:', err);
-          alert('Error al crear producto');
+          const msg = err?.error?.message || err?.error?.nombre || err?.message || 'Error al crear producto';
+          this.errorMensaje.set(msg);
         }
       });
     }
@@ -189,7 +193,8 @@ export class ProductsComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error eliminando producto:', err);
-        alert('Error al eliminar producto');
+        const msg = err?.error?.message || err?.message || 'Error al eliminar producto';
+        this.errorMensaje.set(msg);
       }
     });
   }
@@ -230,7 +235,13 @@ export class ProductsComponent implements OnInit {
     this.mostrarPago.set(true);
   }
 
+  limpiarError() {
+    this.errorMensaje.set(null);
+    this.errorPago.set(null);
+  }
+
   confirmarPago() {
+    this.errorPago.set(null);
     this.procesando.set(true);
     
     // Obtener información del usuario autenticado
@@ -268,6 +279,8 @@ export class ProductsComponent implements OnInit {
         error: (err) => {
           console.error('[ProductsComponent] Error creando pedido:', err);
           this.procesando.set(false);
+          const detalle = err?.error?.producto || err?.error?.message || err?.message || 'Error al procesar el pedido';
+          this.errorPago.set(`❌ ${detalle}`);
         }
       });
     }

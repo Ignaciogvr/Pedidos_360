@@ -43,12 +43,12 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList(
             "http://localhost:4200",          // desarrollo local
-            "https://54.82.58.51",             // producción AWS
-            "http://54.82.58.51",              // producción HTTP
-            "https://54.145.51.231",          // producción AWS EC2
-            "http://54.145.51.231",
-            "https://54.235.23.71",
-            "http://54.235.23.71"
+            "https://100.56.50.91",             // producción AWS
+            "https://100.56.50.91",              // producción HTTP
+            "https://100.56.50.91",          // producción AWS EC2
+            "https://100.56.50.91",
+            "https://100.56.50.91",
+            "https://100.56.50.91"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));

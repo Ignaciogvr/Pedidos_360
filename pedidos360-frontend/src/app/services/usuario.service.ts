@@ -15,7 +15,7 @@ export interface Usuario {
   providedIn: 'root'
 })
 export class UsuarioService {
-  private apiUrl = 'https://54.82.58.51/api/usuarios';
+  private apiUrl = 'https://100.56.50.91/api/usuarios';
 
   constructor(private http: HttpClient) {}
 

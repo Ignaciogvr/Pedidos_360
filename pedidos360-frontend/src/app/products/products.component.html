@@ -57,6 +57,10 @@
         {{ editando() ? '💾 Actualizar Producto' : '💾 Guardar Producto' }}
       </button>
     </div>
+    <div class="error-banner" *ngIf="errorMensaje()">
+      ⚠️ {{ errorMensaje() }}
+      <button class="error-close" (click)="limpiarError()">✕</button>
+    </div>
   </div>
 
   <!-- Filtros -->
@@ -129,6 +133,10 @@
         <button class="btn-primary" (click)="confirmarPago()" [disabled]="procesando()">
           {{ procesando() ? '⏳ Procesando...' : '💳 Confirmar Pago' }}
         </button>
+      </div>
+      <div class="error-banner" *ngIf="errorPago()" style="margin-top:1rem">
+        {{ errorPago() }}
+        <button class="error-close" (click)="limpiarError()">✕</button>
       </div>
     </div>
     <div *ngIf="pagoExitoso()">
