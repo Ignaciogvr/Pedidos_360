@@ -1,5 +1,10 @@
 <div class="products-page">
 
+  <!-- Toast notificación -->
+  <div class="toast-notification" *ngIf="toastVisible()">
+    {{ toastMensaje() }}
+  </div>
+
   <!-- Header -->
   <div class="page-header">
     <div>
@@ -113,6 +118,10 @@
       <div class="form-group">
         <label>Nombre en la tarjeta</label>
         <input type="text" [(ngModel)]="card.nombre" placeholder="Juan Pérez" class="form-input" />
+      </div>
+      <div class="form-group">
+        <label>📍 Dirección de envío *</label>
+        <input type="text" [(ngModel)]="card.direccion" placeholder="Av. Siempre Viva 123, Santiago" class="form-input" />
       </div>
       <div class="form-group">
         <label>Número de tarjeta</label>

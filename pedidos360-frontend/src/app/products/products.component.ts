@@ -48,9 +48,11 @@ export class ProductsComponent implements OnInit {
   productoEditId = signal<number | null>(null);
   errorMensaje = signal<string | null>(null);
   errorPago = signal<string | null>(null);
+  toastVisible = signal(false);
+  toastMensaje = signal('');
 
   form = { nombre: '', descripcion: '', precio: 0, stock: 0, categoria: 'Computación', imagen: '' };
-  card = { nombre: '', numero: '', vencimiento: '', cvv: '' };
+  card = { nombre: '', numero: '', vencimiento: '', cvv: '', direccion: '' };
 
   categorias = ['Todos', 'Computación', 'Periféricos', 'Audio', 'Móviles', 'Accesorios'];
   productos = signal<Producto[]>([]);
@@ -263,7 +265,8 @@ export class ProductsComponent implements OnInit {
         cantidad: item.cantidad,
         total: total,
         clienteEmail: clienteEmail,
-        clienteNombre: clienteNombre
+        clienteNombre: clienteNombre,
+        direccionEnvio: this.card.direccion || 'Sin dirección'
       };
       
       console.log('[ProductsComponent] Enviando pedido:', pedido);
@@ -276,6 +279,7 @@ export class ProductsComponent implements OnInit {
             this.cart.vaciar();
             this.procesando.set(false);
             this.pagoExitoso.set(true);
+            this.mostrarToast(`✅ ¡Pedido realizado! ${items.length} producto(s) en camino`);
           }
         },
         error: (err) => {
@@ -291,7 +295,13 @@ export class ProductsComponent implements OnInit {
   cerrarPago() {
     this.mostrarPago.set(false);
     this.pagoExitoso.set(false);
-    this.card = { nombre: '', numero: '', vencimiento: '', cvv: '' };
+    this.card = { nombre: '', numero: '', vencimiento: '', cvv: '', direccion: '' };
+  }
+
+  mostrarToast(mensaje: string) {
+    this.toastMensaje.set(mensaje);
+    this.toastVisible.set(true);
+    setTimeout(() => this.toastVisible.set(false), 4000);
   }
 
   // TrackBy functions for performance

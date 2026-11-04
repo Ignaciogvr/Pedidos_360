@@ -70,3 +70,22 @@
 .btn-ver-pedidos:hover { background: rgba(99,102,241,0.3); }
 .btn-secondary { flex: 1; background: transparent; color: #94a3b8; border: 1px solid rgba(255,255,255,0.12); padding: 0.6rem 1rem; border-radius: 8px; font-weight: 500; font-size: 0.88rem; cursor: pointer; transition: all 0.2s; }
 .btn-secondary:hover { background: rgba(255,255,255,0.06); color: #f1f5f9; }
+
+/* TOAST NOTIFICACIÓN */
+.toast-notification {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: linear-gradient(135deg, #065f46, #047857);
+  border: 1px solid rgba(52,211,153,0.4);
+  color: #d1fae5;
+  padding: 0.9rem 1.4rem;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  z-index: 9999;
+  animation: slideInRight 0.4s ease, fadeOutRight 0.4s ease 3.6s forwards;
+}
+@keyframes slideInRight { from { opacity:0; transform:translateX(100px); } to { opacity:1; transform:translateX(0); } }
+@keyframes fadeOutRight { from { opacity:1; transform:translateX(0); } to { opacity:0; transform:translateX(100px); } }
