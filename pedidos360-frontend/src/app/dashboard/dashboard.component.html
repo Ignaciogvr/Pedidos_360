@@ -1,44 +1,122 @@
-﻿<div class="dash-page">
+<div class="dash-page">
+
+  <!-- Header -->
   <div class="page-header">
     <div>
       <h1 class="page-title">📊 Panel de Control</h1>
-      <p class="page-subtitle">Resumen en tiempo real del sistema Pedidos360</p>
+      <p class="page-subtitle">Resumen en tiempo real · Pedidos360</p>
+    </div>
+    <a class="btn-primary" routerLink="/orders">Ver todos los pedidos →</a>
+  </div>
+
+  <!-- Stat Cards -->
+  <div class="stats-grid" *ngIf="!loading()">
+    <div class="stat-card stat-total">
+      <div class="stat-icon">📦</div>
+      <div class="stat-info">
+        <span class="stat-label">Total Pedidos</span>
+        <span class="stat-value">{{ stats().total }}</span>
+      </div>
+    </div>
+    <div class="stat-card stat-pending">
+      <div class="stat-icon">🕐</div>
+      <div class="stat-info">
+        <span class="stat-label">Pendientes</span>
+        <span class="stat-value">{{ stats().pendientes }}</span>
+      </div>
+    </div>
+    <div class="stat-card stat-process">
+      <div class="stat-icon">⚙️</div>
+      <div class="stat-info">
+        <span class="stat-label">En Proceso</span>
+        <span class="stat-value">{{ stats().enProceso }}</span>
+      </div>
+    </div>
+    <div class="stat-card stat-done">
+      <div class="stat-icon">✅</div>
+      <div class="stat-info">
+        <span class="stat-label">Completados</span>
+        <span class="stat-value">{{ stats().completados }}</span>
+      </div>
+    </div>
+    <div class="stat-card stat-cancelled">
+      <div class="stat-icon">❌</div>
+      <div class="stat-info">
+        <span class="stat-label">Cancelados</span>
+        <span class="stat-value">{{ stats().cancelados }}</span>
+      </div>
     </div>
   </div>
 
-  <div class="stats-grid" *ngIf="!loading()">
-    <app-stat-card
-      title="Total Pedidos"
-      [value]="stats().total"
-      icon="📦"
-      variant="primary"
-      [loading]="loading()">
-    </app-stat-card>
-    
-    <app-stat-card
-      title="Pendientes"
-      [value]="stats().pendientes"
-      icon="⏳"
-      variant="warning"
-      [loading]="loading()">
-    </app-stat-card>
-    
-    <app-stat-card
-      title="En Proceso"
-      [value]="stats().enProceso"
-      icon="🔄"
-      variant="default"
-      [loading]="loading()">
-    </app-stat-card>
-    
-    <app-stat-card
-      title="Completados"
-      [value]="stats().completados"
-      icon="✅"
-      variant="success"
-      [loading]="loading()">
-    </app-stat-card>
+  <!-- Gráficos -->
+  <div class="charts-row" *ngIf="!loading()">
+
+    <!-- Donut chart distribución -->
+    <div class="glass-card chart-card">
+      <h3 class="chart-title">🍩 Distribución de Estados</h3>
+      <div class="donut-container">
+        <div class="donut" [style.background]="donutDegrees()">
+          <div class="donut-hole">
+            <span class="donut-center-num">{{ stats().total }}</span>
+            <span class="donut-center-label">pedidos</span>
+          </div>
+        </div>
+        <div class="donut-legend">
+          <div class="legend-item"><span class="legend-dot dot-pending"></span>Pendiente <strong>{{ stats().pendientes }}</strong></div>
+          <div class="legend-item"><span class="legend-dot dot-process"></span>En Proceso <strong>{{ stats().enProceso }}</strong></div>
+          <div class="legend-item"><span class="legend-dot dot-done"></span>Completado <strong>{{ stats().completados }}</strong></div>
+          <div class="legend-item"><span class="legend-dot dot-cancelled"></span>Cancelado <strong>{{ stats().cancelados }}</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bar chart últimos 7 días -->
+    <div class="glass-card chart-card chart-card-wide">
+      <h3 class="chart-title">📅 Pedidos últimos 7 días</h3>
+      <div class="bar-chart">
+        <div class="bar-chart-inner">
+          <div class="bar-col" *ngFor="let day of ordenesUltimos7Dias()">
+            <div class="bar-wrap">
+              <span class="bar-count" *ngIf="day.count > 0">{{ day.count }}</span>
+              <div class="bar-fill"
+                [style.height.%]="(day.count / maxDayCount()) * 100"
+                [class.bar-active]="day.count > 0">
+              </div>
+            </div>
+            <span class="bar-label">{{ day.label }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
-  <app-token-display [claims]="tokenInfo" title="📊 Claims del Token JWT (Azure)"></app-token-display>
+  <!-- Pedidos recientes -->
+  <div class="glass-card recent-card" *ngIf="!loading() && recentOrders().length > 0">
+    <div class="recent-header">
+      <h3 class="chart-title">🕒 Pedidos Recientes</h3>
+      <a class="btn-link" routerLink="/orders">Ver todos</a>
+    </div>
+    <div class="recent-list">
+      <div class="recent-item" *ngFor="let p of recentOrders()">
+        <div class="recent-id">#{{ p.id }}</div>
+        <div class="recent-info">
+          <span class="recent-product">{{ p.producto }}</span>
+          <span class="recent-client">{{ p.clienteNombre || p.clienteEmail }}</span>
+        </div>
+        <div class="recent-right">
+          <span class="status-badge" [ngClass]="getEstadoClass(p.estado)">{{ p.estado }}</span>
+          <span class="recent-total" *ngIf="p.total">${{ p.total | number }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty state -->
+  <div class="empty-dash" *ngIf="!loading() && stats().total === 0">
+    <span>📭</span>
+    <h3>Sin pedidos aún</h3>
+    <p>Cuando los clientes hagan pedidos, aparecerán aquí</p>
+  </div>
+
 </div>
