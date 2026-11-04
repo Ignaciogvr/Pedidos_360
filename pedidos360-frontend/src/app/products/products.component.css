@@ -56,3 +56,17 @@
 .error-close { background: transparent; border: none; color: #fca5a5; font-size: 1rem; cursor: pointer; padding: 0 0.25rem; }
 .error-close:hover { color: #ef4444; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+
+/* PAGO EXITOSO */
+.pago-exitoso { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; padding: 1.5rem 1rem; text-align: center; animation: fadeIn 0.4s ease; }
+.pago-exitoso-icon { font-size: 3.5rem; line-height: 1; }
+.pago-exitoso-titulo { font-size: 1.4rem; font-weight: 800; color: #34d399; margin: 0; }
+.pago-exitoso-sub { color: #64748b; font-size: 0.9rem; margin: 0; }
+.pago-exitoso-estado { background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.2); border-radius: 10px; padding: 0.9rem 1.2rem; width: 100%; }
+.estado-badge { display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(251,191,36,0.15); border: 1px solid rgba(251,191,36,0.3); color: #fbbf24; padding: 0.3rem 0.9rem; border-radius: 20px; font-size: 0.82rem; font-weight: 700; }
+.pago-exitoso-nota { color: #64748b; font-size: 0.8rem; margin: 0.6rem 0 0; }
+.pago-exitoso-acciones { display: flex; gap: 0.75rem; width: 100%; }
+.btn-ver-pedidos { flex: 1; background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); color: #a78bfa; padding: 0.6rem 1rem; border-radius: 8px; font-weight: 600; font-size: 0.88rem; cursor: pointer; transition: all 0.2s; text-decoration: none; display: flex; align-items: center; justify-content: center; }
+.btn-ver-pedidos:hover { background: rgba(99,102,241,0.3); }
+.btn-secondary { flex: 1; background: transparent; color: #94a3b8; border: 1px solid rgba(255,255,255,0.12); padding: 0.6rem 1rem; border-radius: 8px; font-weight: 500; font-size: 0.88rem; cursor: pointer; transition: all 0.2s; }
+.btn-secondary:hover { background: rgba(255,255,255,0.06); color: #f1f5f9; }

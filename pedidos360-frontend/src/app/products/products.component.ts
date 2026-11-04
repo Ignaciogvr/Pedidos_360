@@ -1,6 +1,7 @@
-﻿import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { ApiService } from '@core/services/api.service';
 import { PermissionService } from '@core/services/permission.service';
 import { CartService } from '@core/services/cart.service';
@@ -20,6 +21,7 @@ import { ModalComponent } from '@shared/components/modal/modal.component';
   imports: [
     CommonModule,
     FormsModule,
+    RouterLink,
     ProductCardComponent,
     CartModalComponent,
     ModalComponent

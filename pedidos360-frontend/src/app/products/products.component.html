@@ -139,11 +139,18 @@
         <button class="error-close" (click)="limpiarError()">✕</button>
       </div>
     </div>
-    <div *ngIf="pagoExitoso()">
-      <p style="text-align: center; padding: 2rem;">
-        ✅ Tu pedido ha sido procesado exitosamente
-      </p>
-      <button class="btn-primary" (click)="cerrarPago()" style="width: 100%;">Cerrar</button>
+    <div class="pago-exitoso" *ngIf="pagoExitoso()">
+      <div class="pago-exitoso-icon">✅</div>
+      <h3 class="pago-exitoso-titulo">¡Pedido realizado!</h3>
+      <p class="pago-exitoso-sub">Tu pedido fue procesado exitosamente</p>
+      <div class="pago-exitoso-estado">
+        <span class="estado-badge">🕐 Estado: <strong>PENDIENTE</strong></span>
+        <p class="pago-exitoso-nota">📧 Recibirás una notificación cuando tu pedido sea procesado</p>
+      </div>
+      <div class="pago-exitoso-acciones">
+        <a class="btn-ver-pedidos" routerLink="/orders" (click)="cerrarPago()">📋 Ver mis pedidos</a>
+        <button class="btn-primary" (click)="cerrarPago()">Seguir comprando</button>
+      </div>
     </div>
   </app-modal>
 
