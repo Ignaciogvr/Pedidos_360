@@ -1,0 +1,78 @@
+.profile-page { display: flex; flex-direction: column; gap: 1.5rem; }
+
+/* ── HERO BANNER ─────────────────────────── */
+.hero-banner { position: relative; border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); }
+.hero-bg { position: absolute; inset: 0; background: linear-gradient(135deg, rgba(99,102,241,0.18) 0%, rgba(139,92,246,0.12) 50%, rgba(16,185,129,0.06) 100%); }
+.hero-bg::after { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 20% 50%, rgba(99,102,241,0.15) 0%, transparent 60%); }
+.hero-content { position: relative; display: flex; align-items: center; gap: 2rem; padding: 2rem 2.5rem; flex-wrap: wrap; }
+
+/* Avatar */
+.avatar-ring { position: relative; flex-shrink: 0; }
+.avatar-circle { width: 90px; height: 90px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 900; color: white; position: relative; z-index: 1; letter-spacing: -1px; }
+.avatar-admin { background: linear-gradient(135deg, #6366f1, #8b5cf6); box-shadow: 0 0 30px rgba(99,102,241,0.5); }
+.avatar-oper { background: linear-gradient(135deg, #3b82f6, #60a5fa); box-shadow: 0 0 30px rgba(59,130,246,0.5); }
+.avatar-client { background: linear-gradient(135deg, #10b981, #34d399); box-shadow: 0 0 30px rgba(16,185,129,0.5); }
+.avatar-glow { position: absolute; inset: -6px; border-radius: 50%; opacity: 0.35; z-index: 0; animation: pulse-glow 2.5s ease-in-out infinite; }
+.glow-admin { background: radial-gradient(circle, #6366f1, transparent 70%); }
+.glow-oper { background: radial-gradient(circle, #3b82f6, transparent 70%); }
+.glow-client { background: radial-gradient(circle, #10b981, transparent 70%); }
+@keyframes pulse-glow { 0%,100% { transform: scale(1); opacity: 0.35; } 50% { transform: scale(1.15); opacity: 0.6; } }
+
+/* Hero info */
+.hero-info { flex: 1; min-width: 0; }
+.hero-name { font-size: 1.75rem; font-weight: 900; color: #f1f5f9; margin: 0 0 0.3rem; letter-spacing: -0.03em; }
+.hero-email { font-size: 0.88rem; color: #64748b; margin: 0 0 0.9rem; }
+.role-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.role-badge { padding: 0.3rem 0.9rem; border-radius: 20px; font-size: 0.78rem; font-weight: 700; display: inline-flex; align-items: center; gap: 0.3rem; }
+.badge-admin { background: rgba(99,102,241,0.2); color: #a78bfa; border: 1px solid rgba(99,102,241,0.4); }
+.badge-oper { background: rgba(59,130,246,0.2); color: #60a5fa; border: 1px solid rgba(59,130,246,0.4); }
+.badge-client { background: rgba(16,185,129,0.2); color: #34d399; border: 1px solid rgba(16,185,129,0.4); }
+.role-none { background: rgba(100,116,139,0.2); color: #94a3b8; border: 1px solid rgba(148,163,184,0.2); }
+
+/* Logout */
+.btn-logout { background: rgba(239,68,68,0.1); color: #f87171; border: 1px solid rgba(239,68,68,0.3); padding: 0.6rem 1.4rem; border-radius: 10px; font-weight: 700; font-size: 0.88rem; cursor: pointer; transition: all 0.2s; white-space: nowrap; margin-left: auto; }
+.btn-logout:hover { background: rgba(239,68,68,0.2); border-color: rgba(239,68,68,0.6); transform: translateY(-1px); }
+
+/* ── SECTION CARDS ───────────────────────── */
+.section-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 16px; padding: 1.75rem; }
+.section-header { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1.5rem; }
+.section-icon { font-size: 1.5rem; line-height: 1; padding-top: 0.1rem; flex-shrink: 0; }
+.section-title { font-size: 1rem; font-weight: 800; color: #f1f5f9; margin: 0 0 0.2rem; }
+.section-sub { font-size: 0.78rem; color: #64748b; margin: 0; }
+
+/* ── PERMISOS GRID ───────────────────────── */
+.permisos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 0.85rem; }
+.permiso-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; padding: 1rem 1.1rem; display: flex; flex-direction: column; gap: 0.35rem; transition: all 0.2s; }
+.permiso-card:hover { border-color: rgba(99,102,241,0.3); background: rgba(99,102,241,0.05); transform: translateY(-2px); }
+.permiso-off { opacity: 0.45; }
+.permiso-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.2rem; }
+.permiso-emoji { font-size: 1.3rem; }
+.permiso-status { font-size: 0.7rem; font-weight: 700; padding: 0.18rem 0.55rem; border-radius: 20px; }
+.status-on { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
+.status-off { background: rgba(239,68,68,0.1); color: #f87171; border: 1px solid rgba(239,68,68,0.2); }
+.permiso-nombre { font-size: 0.88rem; font-weight: 700; color: #e2e8f0; }
+.permiso-desc { font-size: 0.75rem; color: #475569; line-height: 1.4; }
+
+/* ── JWT CLAIMS ──────────────────────────── */
+.jwt-card { }
+.jwt-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none; margin-bottom: 0; }
+.jwt-header:hover .section-title { color: #a78bfa; }
+.token-badge { background: rgba(99,102,241,0.15); color: #a78bfa; border: 1px solid rgba(167,139,250,0.3); padding: 0.2rem 0.7rem; border-radius: 20px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; white-space: nowrap; }
+.toggle-arrow { font-size: 0.75rem; color: #64748b; transition: transform 0.3s; }
+.toggle-arrow.open { transform: rotate(180deg); color: #a78bfa; }
+.jwt-body { margin-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 1.5rem; animation: fadeIn 0.3s ease; }
+
+/* ── AZURE INFO ──────────────────────────── */
+.azure-card { border-color: rgba(96,165,250,0.15); }
+.azure-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 0.75rem; }
+.azure-item { background: rgba(59,130,246,0.04); border: 1px solid rgba(59,130,246,0.12); border-radius: 10px; padding: 0.9rem 1rem; display: flex; flex-direction: column; gap: 0.4rem; }
+.azure-label { font-size: 0.72rem; font-weight: 700; color: #60a5fa; text-transform: uppercase; letter-spacing: 0.05em; }
+.azure-value { font-size: 0.8rem; color: #94a3b8; font-family: 'Courier New', monospace; word-break: break-all; line-height: 1.4; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+
+@media (max-width: 640px) {
+  .hero-content { flex-direction: column; align-items: flex-start; padding: 1.5rem; }
+  .btn-logout { margin-left: 0; width: 100%; justify-content: center; }
+  .permisos-grid { grid-template-columns: 1fr; }
+}
