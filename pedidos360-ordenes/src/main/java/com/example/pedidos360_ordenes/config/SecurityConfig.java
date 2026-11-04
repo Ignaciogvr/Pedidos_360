@@ -79,8 +79,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(Arrays.asList(
-                "https://54.145.51.231",
-                "https://3.93.182.109",
+                "https://100.56.50.91",
                 "http://localhost:4200"
         )); // FIX EV1: orÃƒÂ­genes especÃƒÂ­ficos Ã¢â‚¬â€ wildcard + credentials es rechazado por el browser
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));

@@ -449,4 +449,4 @@ screen -dmS mensajeria bash -c './gradlew bootRun'
 
 **¡LISTO PARA ENTREGAR! 🎉**
 
-Tu IP AWS: `54.145.51.231` (según documentos anteriores)
+Tu IP AWS: `100.56.50.91` (IP elástica permanente)
