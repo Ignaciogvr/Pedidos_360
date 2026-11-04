@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, signal, computed } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { Pedido } from '../../models/pedido.model';
 
@@ -27,7 +27,7 @@ import { Pedido } from '../../models/pedido.model';
             <tr *ngIf="pedidos.length === 0">
               <td colspan="9" class="empty-row">📭 No hay pedidos</td>
             </tr>
-            <tr *ngFor="let p of pedidos" class="table-row" (click)="onRowClick(p)">
+            <tr *ngFor="let p of paginatedPedidos()" class="table-row" (click)="onRowClick(p)">
               <td><span class="id-badge">#{{ p.id }}</span></td>
               <td class="client-cell">
                 <span class="client-name">{{ p.clienteNombre || '—' }}</span>
@@ -58,7 +58,11 @@ import { Pedido } from '../../models/pedido.model';
         </table>
       </div>
       <div class="table-footer">
-        <span class="count-text">{{ pedidos.length }} pedido(s)</span>
+        <span class="count-text">{{ pedidos.length }} pedido(s) · Pág {{ paginaActual() + 1 }} / {{ totalPaginas() }}</span>
+        <div class="pag-controls">
+          <button class="pag-btn" (click)="anterior()" [disabled]="paginaActual() === 0">← Anterior</button>
+          <button class="pag-btn" (click)="siguiente()" [disabled]="paginaActual() >= totalPaginas() - 1">Siguiente →</button>
+        </div>
       </div>
     </div>
   `,
@@ -72,6 +76,18 @@ export class OrderTableComponent {
   @Output() rowClick = new EventEmitter<Pedido>();
   @Output() editClick = new EventEmitter<Pedido>();
   @Output() cancelClick = new EventEmitter<number>();
+
+  readonly PAGE_SIZE = 10;
+  paginaActual = signal(0);
+
+  readonly totalPaginas = computed(() => Math.max(1, Math.ceil(this.pedidos.length / this.PAGE_SIZE)));
+  readonly paginatedPedidos = computed(() => {
+    const start = this.paginaActual() * this.PAGE_SIZE;
+    return this.pedidos.slice(start, start + this.PAGE_SIZE);
+  });
+
+  anterior() { if (this.paginaActual() > 0) this.paginaActual.update(p => p - 1); }
+  siguiente() { if (this.paginaActual() < this.totalPaginas() - 1) this.paginaActual.update(p => p + 1); }
 
   onRowClick(pedido: Pedido) { this.rowClick.emit(pedido); }
   onEditClick(pedido: Pedido) { this.editClick.emit(pedido); }

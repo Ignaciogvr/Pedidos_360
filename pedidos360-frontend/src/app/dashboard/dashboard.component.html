@@ -6,16 +6,41 @@
       <h1 class="page-title">📊 Panel de Control</h1>
       <p class="page-subtitle">Resumen en tiempo real · Pedidos360</p>
     </div>
-    <a class="btn-primary" routerLink="/orders">Ver todos los pedidos →</a>
+    <a class="btn-primary" routerLink="/orders">Ver pedidos →</a>
   </div>
 
-  <!-- Stat Cards -->
+  <!-- KPI Cards Row -->
   <div class="stats-grid" *ngIf="!loading()">
     <div class="stat-card stat-total">
       <div class="stat-icon">📦</div>
       <div class="stat-info">
         <span class="stat-label">Total Pedidos</span>
         <span class="stat-value">{{ stats().total }}</span>
+      </div>
+    </div>
+    <div class="stat-card stat-revenue">
+      <div class="stat-icon">💰</div>
+      <div class="stat-info">
+        <span class="stat-label">Ingresos Totales</span>
+        <span class="stat-value">${{ ingresoTotal() | number }}</span>
+      </div>
+    </div>
+    <div class="stat-card stat-rate">
+      <div class="stat-icon">🎯</div>
+      <div class="stat-info">
+        <span class="stat-label">Tasa Completados</span>
+        <span class="stat-value">{{ tasaCompletados() }}%</span>
+        <div class="rate-bar">
+          <div class="rate-fill" [style.width.%]="tasaCompletados()"></div>
+        </div>
+      </div>
+    </div>
+    <div class="stat-card stat-top" *ngIf="productoMasVendido()">
+      <div class="stat-icon">🏆</div>
+      <div class="stat-info">
+        <span class="stat-label">Más Vendido</span>
+        <span class="stat-value stat-value-sm">{{ productoMasVendido()!.nombre }}</span>
+        <span class="stat-sub">{{ productoMasVendido()!.cantidad }} unidades</span>
       </div>
     </div>
     <div class="stat-card stat-pending">
@@ -25,13 +50,6 @@
         <span class="stat-value">{{ stats().pendientes }}</span>
       </div>
     </div>
-    <div class="stat-card stat-process">
-      <div class="stat-icon">⚙️</div>
-      <div class="stat-info">
-        <span class="stat-label">En Proceso</span>
-        <span class="stat-value">{{ stats().enProceso }}</span>
-      </div>
-    </div>
     <div class="stat-card stat-done">
       <div class="stat-icon">✅</div>
       <div class="stat-info">
@@ -39,51 +57,97 @@
         <span class="stat-value">{{ stats().completados }}</span>
       </div>
     </div>
-    <div class="stat-card stat-cancelled">
-      <div class="stat-icon">❌</div>
-      <div class="stat-info">
-        <span class="stat-label">Cancelados</span>
-        <span class="stat-value">{{ stats().cancelados }}</span>
-      </div>
-    </div>
   </div>
 
-  <!-- Gráficos -->
+  <!-- Charts Row -->
   <div class="charts-row" *ngIf="!loading()">
 
-    <!-- Donut chart distribución -->
+    <!-- Donut -->
     <div class="glass-card chart-card">
-      <h3 class="chart-title">🍩 Distribución de Estados</h3>
+      <h3 class="chart-title">🍩 Distribución</h3>
       <div class="donut-container">
         <div class="donut" [style.background]="donutDegrees()">
           <div class="donut-hole">
-            <span class="donut-center-num">{{ stats().total }}</span>
-            <span class="donut-center-label">pedidos</span>
+            <span class="donut-num">{{ stats().total }}</span>
+            <span class="donut-lbl">pedidos</span>
           </div>
         </div>
         <div class="donut-legend">
-          <div class="legend-item"><span class="legend-dot dot-pending"></span>Pendiente <strong>{{ stats().pendientes }}</strong></div>
-          <div class="legend-item"><span class="legend-dot dot-process"></span>En Proceso <strong>{{ stats().enProceso }}</strong></div>
-          <div class="legend-item"><span class="legend-dot dot-done"></span>Completado <strong>{{ stats().completados }}</strong></div>
-          <div class="legend-item"><span class="legend-dot dot-cancelled"></span>Cancelado <strong>{{ stats().cancelados }}</strong></div>
+          <div class="legend-item"><span class="legend-dot dot-pending"></span><span>Pendiente</span><strong>{{ stats().pendientes }}</strong></div>
+          <div class="legend-item"><span class="legend-dot dot-process"></span><span>En Proceso</span><strong>{{ stats().enProceso }}</strong></div>
+          <div class="legend-item"><span class="legend-dot dot-done"></span><span>Completado</span><strong>{{ stats().completados }}</strong></div>
+          <div class="legend-item"><span class="legend-dot dot-cancelled"></span><span>Cancelado</span><strong>{{ stats().cancelados }}</strong></div>
         </div>
       </div>
     </div>
 
-    <!-- Bar chart últimos 7 días -->
-    <div class="glass-card chart-card chart-card-wide">
-      <h3 class="chart-title">📅 Pedidos últimos 7 días</h3>
+    <!-- Bar chart con selector -->
+    <div class="glass-card chart-card chart-wide">
+      <div class="chart-header">
+        <h3 class="chart-title">📅 Pedidos por período</h3>
+        <div class="rango-selector">
+          <button class="rango-btn" [class.active]="rango() === 7" (click)="setRango(7)">7D</button>
+          <button class="rango-btn" [class.active]="rango() === 30" (click)="setRango(30)">30D</button>
+          <button class="rango-btn" [class.active]="rango() === 365" (click)="setRango(365)">1A</button>
+        </div>
+      </div>
       <div class="bar-chart">
-        <div class="bar-chart-inner">
-          <div class="bar-col" *ngFor="let day of ordenesUltimos7Dias()">
-            <div class="bar-wrap">
-              <span class="bar-count" *ngIf="day.count > 0">{{ day.count }}</span>
-              <div class="bar-fill"
-                [style.height.%]="(day.count / maxDayCount()) * 100"
-                [class.bar-active]="day.count > 0">
-              </div>
+        <div class="bar-col" *ngFor="let day of barData()">
+          <div class="bar-wrap">
+            <span class="bar-count" *ngIf="day.count > 0">{{ day.count }}</span>
+            <div class="bar-fill" [class.bar-active]="day.count > 0"
+              [style.height.%]="(day.count / maxBar()) * 100">
             </div>
-            <span class="bar-label">{{ day.label }}</span>
+          </div>
+          <span class="bar-label">{{ day.label }}</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Low Stock + Recientes -->
+  <div class="bottom-row" *ngIf="!loading()">
+
+    <!-- Bajo stock -->
+    <div class="glass-card low-stock-card" *ngIf="lowStockProductos().length > 0">
+      <div class="section-header">
+        <h3 class="chart-title">⚠️ Stock Crítico</h3>
+        <a class="btn-link" routerLink="/products">Gestionar →</a>
+      </div>
+      <div class="low-stock-list">
+        <div class="low-stock-item" *ngFor="let p of lowStockProductos()">
+          <img [src]="p.imagen" [alt]="p.nombre" class="low-stock-img" />
+          <div class="low-stock-info">
+            <span class="low-stock-name">{{ p.nombre }}</span>
+            <span class="low-stock-cat">{{ p.categoria }}</span>
+          </div>
+          <div class="low-stock-badge" [ngClass]="getStockClass(p.stock)">
+            {{ p.stock === 0 ? '❌ Agotado' : p.stock + ' restantes' }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pedidos recientes -->
+    <div class="glass-card recent-card">
+      <div class="section-header">
+        <h3 class="chart-title">🕒 Últimos Pedidos</h3>
+        <a class="btn-link" routerLink="/orders">Ver todos →</a>
+      </div>
+      <div class="recent-empty" *ngIf="recentOrders().length === 0">
+        <span>📭</span><p>Sin pedidos aún</p>
+      </div>
+      <div class="recent-list" *ngIf="recentOrders().length > 0">
+        <div class="recent-item" *ngFor="let p of recentOrders()">
+          <div class="recent-id">#{{ p.id }}</div>
+          <div class="recent-info">
+            <span class="recent-product">{{ p.producto }}</span>
+            <span class="recent-client">{{ p.clienteNombre || p.clienteEmail }}</span>
+          </div>
+          <div class="recent-right">
+            <span class="status-badge" [ngClass]="getEstadoClass(p.estado)">{{ p.estado }}</span>
+            <span class="recent-total" *ngIf="p.total">${{ p.total | number }}</span>
           </div>
         </div>
       </div>
@@ -91,32 +155,10 @@
 
   </div>
 
-  <!-- Pedidos recientes -->
-  <div class="glass-card recent-card" *ngIf="!loading() && recentOrders().length > 0">
-    <div class="recent-header">
-      <h3 class="chart-title">🕒 Pedidos Recientes</h3>
-      <a class="btn-link" routerLink="/orders">Ver todos</a>
-    </div>
-    <div class="recent-list">
-      <div class="recent-item" *ngFor="let p of recentOrders()">
-        <div class="recent-id">#{{ p.id }}</div>
-        <div class="recent-info">
-          <span class="recent-product">{{ p.producto }}</span>
-          <span class="recent-client">{{ p.clienteNombre || p.clienteEmail }}</span>
-        </div>
-        <div class="recent-right">
-          <span class="status-badge" [ngClass]="getEstadoClass(p.estado)">{{ p.estado }}</span>
-          <span class="recent-total" *ngIf="p.total">${{ p.total | number }}</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Empty state -->
-  <div class="empty-dash" *ngIf="!loading() && stats().total === 0">
-    <span>📭</span>
-    <h3>Sin pedidos aún</h3>
-    <p>Cuando los clientes hagan pedidos, aparecerán aquí</p>
+  <!-- Loading -->
+  <div class="loading-dash" *ngIf="loading()">
+    <div class="spinner"></div>
+    <p>Cargando datos...</p>
   </div>
 
 </div>

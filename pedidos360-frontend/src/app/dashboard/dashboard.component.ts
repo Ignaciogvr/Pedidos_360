@@ -1,8 +1,18 @@
-import { Component, OnInit, inject, computed, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, inject, computed, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { UserStore } from '../core/stores/user.store';
 import { OrdersStore } from '../core/stores/orders.store';
+import { ApiService } from '../core/services/api.service';
+
+interface Producto {
+  id: number;
+  nombre: string;
+  stock: number;
+  precio: number;
+  categoria: string;
+  imagen: string;
+}
 
 @Component({
   selector: 'app-dashboard',
@@ -15,16 +25,43 @@ import { OrdersStore } from '../core/stores/orders.store';
 export class DashboardComponent implements OnInit {
   private userStore = inject(UserStore);
   private ordersStore = inject(OrdersStore);
+  private apiService = inject(ApiService);
 
   readonly user = this.userStore.currentUser;
   readonly stats = this.ordersStore.stats;
   readonly loading = this.ordersStore.loading;
   readonly orders = this.ordersStore.orders;
 
+  productos = signal<Producto[]>([]);
+  rango = signal<7 | 30 | 365>(7);
+
   readonly recentOrders = computed(() =>
     [...this.orders()].sort((a, b) =>
       new Date(b.fechaCreacion || 0).getTime() - new Date(a.fechaCreacion || 0).getTime()
     ).slice(0, 5)
+  );
+
+  readonly ingresoTotal = computed(() =>
+    this.orders().filter(o => o.estado !== 'CANCELADO')
+      .reduce((sum, o) => sum + (Number(o.total) || 0), 0)
+  );
+
+  readonly tasaCompletados = computed(() => {
+    const total = this.stats().total;
+    return total === 0 ? 0 : Math.round((this.stats().completados / total) * 100);
+  });
+
+  readonly productoMasVendido = computed(() => {
+    const counts: Record<string, number> = {};
+    this.orders().forEach(o => {
+      if (o.producto) counts[o.producto] = (counts[o.producto] || 0) + (o.cantidad || 1);
+    });
+    const top = Object.entries(counts).sort((a, b) => b[1] - a[1])[0];
+    return top ? { nombre: top[0], cantidad: top[1] } : null;
+  });
+
+  readonly lowStockProductos = computed(() =>
+    [...this.productos()].filter(p => p.stock < 5).sort((a, b) => a.stock - b.stock).slice(0, 6)
   );
 
   readonly donutDegrees = computed(() => {
@@ -45,36 +82,66 @@ export class DashboardComponent implements OnInit {
     return `conic-gradient(${segments.join(', ')})`;
   });
 
-  readonly ordenesUltimos7Dias = computed(() => {
-    const days: { label: string; count: number }[] = [];
-    for (let i = 6; i >= 0; i--) {
-      const d = new Date();
-      d.setDate(d.getDate() - i);
-      const label = d.toLocaleDateString('es-CL', { weekday: 'short' });
-      const dateStr = d.toISOString().split('T')[0];
-      const count = this.orders().filter(o =>
-        (o.fechaCreacion || '').startsWith(dateStr)
-      ).length;
-      days.push({ label, count });
+  readonly barData = computed(() => {
+    const dias = this.rango();
+    const days: { label: string; count: number; revenue: number }[] = [];
+    const now = new Date();
+
+    if (dias <= 30) {
+      for (let i = dias - 1; i >= 0; i--) {
+        const d = new Date(now);
+        d.setDate(d.getDate() - i);
+        const dateStr = d.toISOString().split('T')[0];
+        const label = dias === 7
+          ? d.toLocaleDateString('es-CL', { weekday: 'short' })
+          : d.toLocaleDateString('es-CL', { day: '2-digit', month: '2-digit' });
+        const dayOrders = this.orders().filter(o => (o.fechaCreacion || '').startsWith(dateStr));
+        days.push({
+          label,
+          count: dayOrders.length,
+          revenue: dayOrders.reduce((s, o) => s + (Number(o.total) || 0), 0)
+        });
+      }
+    } else {
+      // 1 año — agrupar por mes
+      for (let i = 11; i >= 0; i--) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const ym = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+        const label = d.toLocaleDateString('es-CL', { month: 'short' });
+        const monthOrders = this.orders().filter(o => (o.fechaCreacion || '').startsWith(ym));
+        days.push({
+          label,
+          count: monthOrders.length,
+          revenue: monthOrders.reduce((s, o) => s + (Number(o.total) || 0), 0)
+        });
+      }
     }
     return days;
   });
 
-  readonly maxDayCount = computed(() =>
-    Math.max(1, ...this.ordenesUltimos7Dias().map(d => d.count))
-  );
+  readonly maxBar = computed(() => Math.max(1, ...this.barData().map(d => d.count)));
 
   ngOnInit() {
     this.ordersStore.loadOrders();
+    this.apiService.get<Producto[]>('/api/catalogo/productos').subscribe({
+      next: (data) => this.productos.set(data),
+      error: () => {}
+    });
   }
+
+  setRango(r: 7 | 30 | 365) { this.rango.set(r); }
 
   getEstadoClass(estado: string | undefined): string {
     const map: Record<string, string> = {
-      'PENDIENTE': 'estado-pendiente',
-      'EN_PROCESO': 'estado-proceso',
-      'COMPLETADO': 'estado-completado',
-      'CANCELADO': 'estado-cancelado'
+      'PENDIENTE': 'estado-pendiente', 'EN_PROCESO': 'estado-proceso',
+      'COMPLETADO': 'estado-completado', 'CANCELADO': 'estado-cancelado'
     };
     return map[estado || ''] || '';
+  }
+
+  getStockClass(stock: number): string {
+    if (stock === 0) return 'stock-zero';
+    if (stock < 3) return 'stock-critical';
+    return 'stock-low';
   }
 }

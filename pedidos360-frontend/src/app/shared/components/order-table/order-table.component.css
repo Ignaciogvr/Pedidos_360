@@ -25,8 +25,12 @@
 
 .date-cell { font-size: 0.78rem; color: #64748b; white-space: nowrap; }
 .actions-cell { display: flex; gap: 0.5rem; align-items: center; white-space: nowrap; }
-.table-footer { padding: 0.75rem 1rem; border-top: 1px solid rgba(255,255,255,0.05); }
+.table-footer { padding: 0.75rem 1rem; border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center; }
 .count-text { font-size: 0.78rem; color: #475569; }
+.pag-controls { display: flex; gap: 0.4rem; }
+.pag-btn { background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.2); color: #a78bfa; padding: 0.3rem 0.8rem; border-radius: 6px; font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.pag-btn:hover:not(:disabled) { background: rgba(99,102,241,0.25); }
+.pag-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 .empty-row { text-align: center; color: #475569; padding: 2.5rem !important; font-style: italic; }
 
 /* Estado badges */
