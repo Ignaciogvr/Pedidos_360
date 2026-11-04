@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, computed, signal, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { UserStore } from '../core/stores/user.store';
 import { OrdersStore } from '../core/stores/orders.store';
@@ -18,7 +18,7 @@ interface Producto {
   selector: 'app-dashboard',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, DatePipe, RouterLink],
+  imports: [CommonModule, RouterLink],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
