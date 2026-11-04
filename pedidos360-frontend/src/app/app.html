@@ -44,7 +44,7 @@
 
         <ng-container *ngIf="isAuthenticated() && user()">
           <div class="user-pill" routerLink="/profile" style="cursor:pointer">
-            <div class="user-pill-avatar">{{ user()!.name.split(' ').map((w: string) => w[0]).slice(0,2).join('').toUpperCase() }}</div>
+          <div class="user-pill-avatar">{{ getInitials(user()!.name) }}</div>
             <div class="user-pill-info">
               <span class="user-pill-name">{{ user()!.name }}</span>
               <span class="user-pill-role" [ngClass]="getRoleClass(user()!.roles[0])">{{ user()!.roles[0] || 'Sin rol' }}</span>
