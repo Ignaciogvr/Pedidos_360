@@ -1,4 +1,4 @@
-﻿import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UsuarioService, Usuario } from '../../services/usuario.service';
@@ -15,6 +15,30 @@ export class UsersComponent implements OnInit {
   usuarios = signal<Usuario[]>([]);
   cargando = signal(true);
   error = signal<string | null>(null);
+  searchQuery = signal('');
+
+  filteredUsuarios = computed(() => {
+    const q = this.searchQuery().toLowerCase().trim();
+    if (!q) return this.usuarios();
+    return this.usuarios().filter(u =>
+      u.nombre.toLowerCase().includes(q) || u.email.toLowerCase().includes(q)
+    );
+  });
+
+  stats = computed(() => {
+    const all = this.usuarios();
+    return {
+      total: all.length,
+      admins: all.filter(u => u.rol === 'ADMIN').length,
+      operadores: all.filter(u => u.rol === 'OPERADOR').length,
+      clientes: all.filter(u => u.rol === 'CLIENTE').length,
+      suspendidos: all.filter(u => !u.activo).length
+    };
+  });
+
+  getInitials(nombre: string): string {
+    return nombre.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+  }
   ngOnInit(): void { this.cargarUsuarios(); }
   cargarUsuarios(): void {
     this.cargando.set(true);
