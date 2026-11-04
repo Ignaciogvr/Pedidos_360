@@ -1,4 +1,4 @@
-﻿<div class="orders-page">
+<div class="orders-page">
 
   <!-- Header -->
   <div class="page-header">
@@ -70,20 +70,42 @@
     (onClose)="modalDetalle.set(false)">
     
     <div *ngIf="pedidoDetalle() as p" class="detalle-content">
-      <div class="detalle-item">
-        <strong>Producto:</strong> {{ p.producto }}
+      <div class="detalle-row">
+        <div class="detalle-item">
+          <span class="detalle-label">📦 Producto</span>
+          <span class="detalle-value">{{ p.producto }}</span>
+        </div>
+        <div class="detalle-item">
+          <span class="detalle-label">🔢 Cantidad</span>
+          <span class="detalle-value">{{ p.cantidad }}</span>
+        </div>
       </div>
-      <div class="detalle-item">
-        <strong>Cantidad:</strong> {{ p.cantidad }}
+      <div class="detalle-row">
+        <div class="detalle-item">
+          <span class="detalle-label">💰 Total</span>
+          <span class="detalle-value total-valor">${{ p.total | number }}</span>
+        </div>
+        <div class="detalle-item">
+          <span class="detalle-label">🕐 Estado</span>
+          <span class="status-badge" [ngClass]="getEstadoClass(p.estado || 'PENDIENTE')">{{ p.estado }}</span>
+        </div>
       </div>
-      <div class="detalle-item">
-        <strong>Estado:</strong> <span class="status-badge" [ngClass]="getEstadoClass(p.estado || 'PENDIENTE')">{{ p.estado }}</span>
+      <div class="detalle-item detalle-full">
+        <span class="detalle-label">📍 Dirección de envío</span>
+        <span class="detalle-value" *ngIf="p.direccionEnvio">{{ p.direccionEnvio }}</span>
+        <span class="detalle-value sin-dato" *ngIf="!p.direccionEnvio">Sin dirección registrada</span>
       </div>
-      <div class="detalle-item" *ngIf="p.clienteNombre">
-        <strong>Cliente:</strong> {{ p.clienteNombre }} ({{ p.clienteEmail }})
+      <div class="detalle-item detalle-full" *ngIf="p.clienteNombre">
+        <span class="detalle-label">👤 Cliente</span>
+        <span class="detalle-value">{{ p.clienteNombre }} — {{ p.clienteEmail }}</span>
       </div>
-      <div class="detalle-item" *ngIf="p.comentarioAdmin">
-        <strong>Mensaje Admin:</strong> <em>{{ p.comentarioAdmin }}</em>
+      <div class="detalle-item detalle-full" *ngIf="p.fechaCreacion">
+        <span class="detalle-label">🗓️ Fecha del pedido</span>
+        <span class="detalle-value">{{ p.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</span>
+      </div>
+      <div class="detalle-item detalle-full" *ngIf="p.comentarioAdmin">
+        <span class="detalle-label">💬 Mensaje del operador</span>
+        <span class="detalle-value comentario">{{ p.comentarioAdmin }}</span>
       </div>
     </div>
 
