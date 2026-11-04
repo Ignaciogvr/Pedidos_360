@@ -1,4 +1,4 @@
-﻿import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { Pedido } from '../../models/pedido.model';
 
@@ -10,13 +10,19 @@ import { Pedido } from '../../models/pedido.model';
     <div class="order-card" (click)="onClick()">
       <div class="order-card-header">
         <span class="id-badge">#{{ pedido.id }}</span>
-        <span class="status-badge" [ngClass]="getEstadoClass()">{{ pedido.estado }}</span>
+        <span class="status-badge" [ngClass]="getEstadoClass()">{{ getEstadoLabel() }}</span>
       </div>
-      <h3 class="order-product">{{ pedido.producto }}</h3>
-      <p class="order-date">{{ pedido.fechaCreacion | date:'dd MMM yyyy, HH:mm' }}</p>
+      <h3 class="order-product">{{ pedido.producto || 'Sin nombre' }}</h3>
+
+      <div class="order-meta">
+        <span class="order-meta-item">👤 {{ pedido.clienteNombre || pedido.clienteEmail || 'Cliente' }}</span>
+        <span class="order-meta-item" *ngIf="pedido.direccionEnvio">📍 {{ pedido.direccionEnvio }}</span>
+        <span class="order-meta-item" *ngIf="!pedido.direccionEnvio" style="color:#475569">📍 Sin dirección</span>
+        <span class="order-meta-item">🗓️ {{ pedido.fechaCreacion | date:'dd MMM yyyy, HH:mm' }}</span>
+      </div>
 
       <!-- Timeline de estados -->
-      <div class="timeline">
+      <div class="timeline" *ngIf="pedido.estado !== 'CANCELADO'">
         <div class="timeline-step" [class.done]="isEstadoAlcanzado('PENDIENTE')" [class.active]="pedido.estado === 'PENDIENTE'">
           <div class="timeline-dot"></div>
           <span>Pendiente</span>
@@ -33,6 +39,10 @@ import { Pedido } from '../../models/pedido.model';
         </div>
       </div>
 
+      <div class="cancelado-banner" *ngIf="pedido.estado === 'CANCELADO'">
+        ❌ Pedido cancelado
+      </div>
+
       <div class="admin-comment" *ngIf="pedido.comentarioAdmin">
         <span class="comment-icon">💬</span>
         <span class="comment-text">{{ pedido.comentarioAdmin }}</span>
@@ -40,6 +50,7 @@ import { Pedido } from '../../models/pedido.model';
 
       <div class="order-card-footer">
         <span class="order-qty">Cantidad: {{ pedido.cantidad }}</span>
+        <span class="order-total" *ngIf="pedido.total">\${{ pedido.total | number }}</span>
         <span class="ver-detalle">Ver detalle →</span>
       </div>
     </div>
@@ -55,8 +66,23 @@ export class OrderCardComponent {
   }
 
   getEstadoClass(): string {
-    if (!this.pedido.estado) return '';
-    return this.pedido.estado.toLowerCase().replace('_', '_');
+    const map: Record<string, string> = {
+      'PENDIENTE': 'estado-pendiente',
+      'EN_PROCESO': 'estado-proceso',
+      'COMPLETADO': 'estado-completado',
+      'CANCELADO': 'estado-cancelado'
+    };
+    return map[this.pedido.estado || ''] || '';
+  }
+
+  getEstadoLabel(): string {
+    const map: Record<string, string> = {
+      'PENDIENTE': '🕐 Pendiente',
+      'EN_PROCESO': '⚙️ En Proceso',
+      'COMPLETADO': '✅ Completado',
+      'CANCELADO': '❌ Cancelado'
+    };
+    return map[this.pedido.estado || ''] || this.pedido.estado || 'Desconocido';
   }
 
   isEstadoAlcanzado(estadoCheck: string): boolean {

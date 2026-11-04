@@ -1,4 +1,4 @@
-﻿export interface Pedido {
+export interface Pedido {
   id?: number;
   clienteEmail?: string;
   clienteNombre?: string;
@@ -8,4 +8,5 @@
   estado?: string;
   fechaCreacion?: string;
   comentarioAdmin?: string;
+  direccionEnvio?: string;
 }
