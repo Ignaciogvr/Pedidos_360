@@ -1,6 +1,7 @@
-﻿import { Injectable, inject, signal, computed } from '@angular/core';
+import { Injectable, inject, signal, computed } from '@angular/core';
 import { ApiService } from '../services/api.service';
 import { PermissionService } from '../services/permission.service';
+import { UserStore } from './user.store';
 import { Pedido } from '../../shared/models/pedido.model';
 
 export type OrderFilter = 'all' | 'PENDIENTE' | 'EN_PROCESO' | 'COMPLETADO' | 'CANCELADO';
@@ -25,6 +26,7 @@ export interface OrdersState {
 export class OrdersStore {
   private apiService = inject(ApiService);
   private permissionService = inject(PermissionService);
+  private userStore = inject(UserStore);
   
   // Private writable signals
   private ordersSignal = signal<Pedido[]>([]);
@@ -83,9 +85,20 @@ export class OrdersStore {
     
     this.apiService.get<Pedido[]>('/api/pedidos').subscribe({
       next: (orders) => {
-        this.ordersSignal.set(orders);
+        // Si es cliente, solo mostrar SUS pedidos
+        const canViewAll = this.permissionService.canViewAllOrders();
+        if (!canViewAll) {
+          const myEmail = this.userStore.userEmail()?.toLowerCase();
+          const myOrders = orders.filter(o =>
+            (o.clienteEmail || '').toLowerCase() === myEmail
+          );
+          this.ordersSignal.set(myOrders);
+          console.info('[OrdersStore] Cliente — pedidos propios:', myOrders.length, '/', orders.length);
+        } else {
+          this.ordersSignal.set(orders);
+          console.info('[OrdersStore] Admin/Operador — todos los pedidos:', orders.length);
+        }
         this.loadingSignal.set(false);
-        console.info('[OrdersStore] Orders loaded successfully:', orders.length);
       },
       error: (err) => {
         const errorMsg = err?.message || 'Error al cargar los pedidos. Intenta nuevamente.';
