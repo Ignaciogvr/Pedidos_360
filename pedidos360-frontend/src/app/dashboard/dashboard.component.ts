@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, computed, signal, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { UserStore } from '../core/stores/user.store';
 import { OrdersStore } from '../core/stores/orders.store';
@@ -18,7 +18,7 @@ interface Producto {
   selector: 'app-dashboard',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, DatePipe, RouterLink],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
@@ -31,6 +31,11 @@ export class DashboardComponent implements OnInit {
   readonly stats = this.ordersStore.stats;
   readonly loading = this.ordersStore.loading;
   readonly orders = this.ordersStore.orders;
+
+  readonly esCliente = computed(() => {
+    const roles = this.userStore.userRoles();
+    return !roles.some(r => r.toUpperCase().includes('ADMIN') || r.toUpperCase().includes('OPERADOR') || r.toUpperCase().includes('OPERATOR'));
+  });
 
   productos = signal<Producto[]>([]);
   rango = signal<7 | 30 | 365>(7);
@@ -63,6 +68,14 @@ export class DashboardComponent implements OnInit {
   readonly lowStockProductos = computed(() =>
     [...this.productos()].filter(p => p.stock < 5).sort((a, b) => a.stock - b.stock).slice(0, 6)
   );
+
+  readonly catalogStats = computed(() => ({
+    total: this.productos().length,
+    enStock: this.productos().filter(p => p.stock > 0).length,
+    agotados: this.productos().filter(p => p.stock === 0).length,
+    stockCritico: this.productos().filter(p => p.stock > 0 && p.stock < 5).length,
+    productosDisponibles: this.productos().filter(p => p.stock > 0).slice(0, 4)
+  }));
 
   readonly donutDegrees = computed(() => {
     const s = this.stats();
