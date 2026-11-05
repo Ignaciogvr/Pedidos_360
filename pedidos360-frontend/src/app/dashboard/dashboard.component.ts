@@ -37,6 +37,11 @@ export class DashboardComponent implements OnInit {
     return !roles.some(r => r.toUpperCase().includes('ADMIN') || r.toUpperCase().includes('OPERADOR') || r.toUpperCase().includes('OPERATOR'));
   });
 
+  readonly firstName = computed(() => {
+    const name = this.userStore.currentUser()?.name || '';
+    return name.split(' ')[0] || name;
+  });
+
   productos = signal<Producto[]>([]);
   rango = signal<7 | 30 | 365>(7);
 
