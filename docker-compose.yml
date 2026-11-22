@@ -81,6 +81,8 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+      KAFKA_HEAP_OPTS: "-Xmx256M -Xms128M"
+    mem_limit: 350m
     volumes:
       - zookeeper_data:/var/lib/zookeeper/data
       - zookeeper_logs:/var/lib/zookeeper/log
@@ -117,8 +119,10 @@ services:
       KAFKA_LOG_RETENTION_MINUTES: 10080
       KAFKA_LOG_RETENTION_BYTES: 1073741824
       KAFKA_LOG_RETENTION_CHECK_INTERVAL_MS: 300000
-      KAFKA_NUM_NETWORK_THREADS: 8
-      KAFKA_NUM_IO_THREADS: 8
+      KAFKA_NUM_NETWORK_THREADS: 3
+      KAFKA_NUM_IO_THREADS: 3
+      KAFKA_HEAP_OPTS: "-Xmx512M -Xms256M"
+    mem_limit: 600m
     volumes:
       - kafka1_data:/var/lib/kafka/data
     networks:
@@ -128,7 +132,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
-      start_period: 20s
+      start_period: 30s
 
   kafka-broker-2:
     image: confluentinc/cp-kafka:7.5.0
@@ -155,8 +159,10 @@ services:
       KAFKA_LOG_RETENTION_MINUTES: 10080
       KAFKA_LOG_RETENTION_BYTES: 1073741824
       KAFKA_LOG_RETENTION_CHECK_INTERVAL_MS: 300000
-      KAFKA_NUM_NETWORK_THREADS: 8
-      KAFKA_NUM_IO_THREADS: 8
+      KAFKA_NUM_NETWORK_THREADS: 3
+      KAFKA_NUM_IO_THREADS: 3
+      KAFKA_HEAP_OPTS: "-Xmx512M -Xms256M"
+    mem_limit: 600m
     volumes:
       - kafka2_data:/var/lib/kafka/data
     networks:
@@ -166,7 +172,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
-      start_period: 20s
+      start_period: 30s
 
   kafka-broker-3:
     image: confluentinc/cp-kafka:7.5.0
@@ -193,8 +199,10 @@ services:
       KAFKA_LOG_RETENTION_MINUTES: 10080
       KAFKA_LOG_RETENTION_BYTES: 1073741824
       KAFKA_LOG_RETENTION_CHECK_INTERVAL_MS: 300000
-      KAFKA_NUM_NETWORK_THREADS: 8
-      KAFKA_NUM_IO_THREADS: 8
+      KAFKA_NUM_NETWORK_THREADS: 3
+      KAFKA_NUM_IO_THREADS: 3
+      KAFKA_HEAP_OPTS: "-Xmx512M -Xms256M"
+    mem_limit: 600m
     volumes:
       - kafka3_data:/var/lib/kafka/data
     networks:
@@ -204,7 +212,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
-      start_period: 20s
+      start_period: 30s
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
