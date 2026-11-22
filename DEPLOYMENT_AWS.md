@@ -82,6 +82,12 @@ Custom TCP    | 8080 | 0.0.0.0/0   | BFF
 Custom TCP    | 8081 | 0.0.0.0/0   | MS Órdenes
 Custom TCP    | 8082 | 0.0.0.0/0   | MS Catálogo
 Custom TCP    | 8083 | 0.0.0.0/0   | MS Mensajería
+Custom TCP    | 8084 | 0.0.0.0/0   | Kafka Admin (EP5/EP6)
+Custom TCP    | 8085 | 0.0.0.0/0   | Kafka Streaming (EP5/EP6)
+Custom TCP    | 8090 | 0.0.0.0/0   | Kafka UI
+Custom TCP    | 9092 | 0.0.0.0/0   | Kafka Broker 1
+Custom TCP    | 9093 | 0.0.0.0/0   | Kafka Broker 2
+Custom TCP    | 9094 | 0.0.0.0/0   | Kafka Broker 3
 Custom TCP    | 15672| 0.0.0.0/0   | RabbitMQ Management
 Custom TCP    | 3000 | 0.0.0.0/0   | Grafana
 Custom TCP    | 9090 | 0.0.0.0/0   | Prometheus
@@ -314,6 +320,20 @@ chmod +x gradlew
 ./gradlew build -x test
 cd ..
 
+# Kafka Admin (EP5/EP6)
+echo "Compilando Kafka Admin..."
+cd pedidos360-kafka-admin
+chmod +x gradlew
+./gradlew build -x test
+cd ..
+
+# Kafka Streaming (EP5/EP6)
+echo "Compilando Kafka Streaming..."
+cd pedidos360-streaming
+chmod +x gradlew
+./gradlew build -x test
+cd ..
+
 echo "✅ Backend compilado"
 ```
 
@@ -396,6 +416,22 @@ nohup ./gradlew bootRun > ../logs/mensajeria.log 2>&1 &
 echo $! > mensajeria_pid.txt
 cd ..
 
+# Kafka Admin (EP5/EP6) — espera que Kafka esté listo
+echo "Iniciando Kafka Admin (puerto 8084)..."
+sleep 15
+cd pedidos360-kafka-admin
+nohup ./gradlew bootRun > ../logs/kafka-admin.log 2>&1 &
+echo $! > kafka_admin_pid.txt
+cd ..
+
+# Kafka Streaming (EP5/EP6)
+echo "Iniciando Kafka Streaming (puerto 8085)..."
+sleep 10
+cd pedidos360-streaming
+nohup ./gradlew bootRun > ../logs/streaming.log 2>&1 &
+echo $! > streaming_pid.txt
+cd ..
+
 echo "✅ Microservicios iniciados"
 ```
 
@@ -439,11 +475,17 @@ docker ps
 - ✅ Puerto 8081: Órdenes
 - ✅ Puerto 8082: Catálogo
 - ✅ Puerto 8083: Mensajería
+- ✅ Puerto 8084: Kafka Admin
+- ✅ Puerto 8085: Kafka Streaming
 - ✅ Puerto 3306: MySQL
 - ✅ Puerto 5672: RabbitMQ
 - ✅ Puerto 15672: RabbitMQ Management
 - ✅ Puerto 3000: Grafana
 - ✅ Puerto 9090: Prometheus
+- ✅ Puerto 8090: Kafka UI
+- ✅ Puerto 9092: Kafka Broker 1
+- ✅ Puerto 9093: Kafka Broker 2
+- ✅ Puerto 9094: Kafka Broker 3
 
 ---
 

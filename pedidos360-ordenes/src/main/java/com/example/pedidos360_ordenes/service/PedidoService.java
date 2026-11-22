@@ -1,11 +1,14 @@
 package com.example.pedidos360_ordenes.service;
 
+import com.example.pedidos360_ordenes.dto.PedidoEventDTO;
 import com.example.pedidos360_ordenes.entity.Pedido;
 import com.example.pedidos360_ordenes.repository.PedidoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,10 +20,28 @@ public class PedidoService {
 
     private final PedidoRepository repository;
     private final PedidoEventoPublisher eventoPublisher;
+    private final KafkaProducerService kafkaProducerService;
 
-    public PedidoService(PedidoRepository repository, PedidoEventoPublisher eventoPublisher) {
+    public PedidoService(PedidoRepository repository,
+                         PedidoEventoPublisher eventoPublisher,
+                         KafkaProducerService kafkaProducerService) {
         this.repository = repository;
         this.eventoPublisher = eventoPublisher;
+        this.kafkaProducerService = kafkaProducerService;
+    }
+
+    private PedidoEventDTO toEventDTO(Pedido pedido, String eventType) {
+        return PedidoEventDTO.builder()
+                .pedidoId(pedido.getId())
+                .clienteEmail(pedido.getClienteEmail())
+                .clienteNombre(pedido.getClienteEmail())
+                .productoNombre(pedido.getProducto())
+                .cantidad(pedido.getCantidad())
+                .total(pedido.getTotal() != null ? pedido.getTotal() : BigDecimal.ZERO)
+                .estado(pedido.getEstado())
+                .eventType(eventType)
+                .timestamp(LocalDateTime.now())
+                .build();
     }
 
     @Transactional(readOnly = true)
@@ -48,6 +69,13 @@ public class PedidoService {
         Pedido guardado = repository.save(pedido);
         log.info("Order saved to database with ID: {}", guardado.getId());
         eventoPublisher.publicarPedidoCreado(guardado);
+        // Publicar también a Kafka para streaming EP5/EP6
+        try {
+            kafkaProducerService.enviarEventoPedido(toEventDTO(guardado, "CREATED"));
+            kafkaProducerService.enviarEventoProducto(toEventDTO(guardado, "CREATED"));
+        } catch (Exception e) {
+            log.warn("[KAFKA] No se pudo publicar evento (Kafka puede no estar disponible): {}", e.getMessage());
+        }
         return guardado;
     }
 
@@ -62,6 +90,12 @@ public class PedidoService {
             Pedido actualizado = repository.save(p);
             log.info("Order {} status changed from {} to {}", id, oldEstado, estado);
             eventoPublisher.publicarPedidoActualizado(actualizado);
+            // Publicar también a Kafka para streaming EP5/EP6
+            try {
+                kafkaProducerService.enviarEventoPedido(toEventDTO(actualizado, "UPDATED"));
+            } catch (Exception e) {
+                log.warn("[KAFKA] No se pudo publicar evento update (Kafka puede no estar disponible): {}", e.getMessage());
+            }
             return actualizado;
         });
     }
