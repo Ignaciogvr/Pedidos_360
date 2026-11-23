@@ -13,43 +13,42 @@ echo "================================================"
 # --- 1. MICROSERVICIOS JAVA ---
 echo ""
 echo "[1/3] Deteniendo microservicios Java..."
-pkill -f "pedidos360-bff" 2>/dev/null && echo "    BFF detenido" || echo "    BFF no estaba corriendo"
-pkill -f "pedidos360-ordenes" 2>/dev/null && echo "    Ordenes detenido" || echo "    Ordenes no estaba corriendo"
-pkill -f "pedidos360-catalogo" 2>/dev/null && echo "    Catalogo detenido" || echo "    Catalogo no estaba corriendo"
-pkill -f "pedidos360-mensajeria" 2>/dev/null && echo "    Mensajeria detenido" || echo "    Mensajeria no estaba corriendo"
-pkill -f "pedidos360-kafka-admin" 2>/dev/null && echo "    Kafka Admin detenido" || echo "    Kafka Admin no estaba corriendo"
-pkill -f "pedidos360-streaming" 2>/dev/null && echo "    Kafka Streaming detenido" || echo "    Kafka Streaming no estaba corriendo"
-pkill -f "ng serve" 2>/dev/null && echo "    Frontend detenido" || echo "    Frontend no estaba corriendo"
-
+pkill -f "pedidos360-bff" 2>/dev/null && echo "    BFF detenido" || true
+pkill -f "pedidos360-ordenes" 2>/dev/null && echo "    Ordenes detenido" || true
+pkill -f "pedidos360-catalogo" 2>/dev/null && echo "    Catalogo detenido" || true
+pkill -f "pedidos360-mensajeria" 2>/dev/null && echo "    Mensajeria detenido" || true
+pkill -f "pedidos360-kafka-admin" 2>/dev/null && echo "    Kafka Admin detenido" || true
+pkill -f "pedidos360-streaming" 2>/dev/null && echo "    Kafka Streaming detenido" || true
+pkill -f "ng serve" 2>/dev/null && echo "    Frontend detenido" || true
+sleep 2
 echo "    Procesos Java restantes: $(ps aux | grep java | grep -v grep | wc -l)"
 
 # --- 2. KAFKA UI ---
 echo ""
 echo "[2/3] Deteniendo Kafka UI..."
-docker rm -f kafka-ui-pedidos360 2>/dev/null && echo "    Kafka UI detenido" || echo "    Kafka UI no estaba corriendo"
+docker rm -f kafka-ui-pedidos360 2>/dev/null && echo "    Kafka UI detenido" || true
 
 # --- 3. DOCKER COMPOSE ---
 echo ""
 echo "[3/3] Deteniendo Docker Compose..."
 docker compose down
-echo "    Docker Compose detenido"
+echo "    Docker detenido"
 
-# --- LIMPIAR LOGS (opcional) ---
+# --- LIMPIAR LOGS ---
 echo ""
-read -p "Limpiar logs? (s/n): " resp
-if [[ "$resp" == "s" || "$resp" == "S" ]]; then
-    > logs/bff.log
-    > logs/ordenes.log
-    > logs/catalogo.log
-    > logs/mensajeria.log
-    > logs/kafka-admin.log
-    > logs/streaming.log
-    > logs/frontend.log
-    echo "    Logs limpiados"
-fi
+echo "Limpiando logs..."
+> logs/bff.log 2>/dev/null || true
+> logs/ordenes.log 2>/dev/null || true
+> logs/catalogo.log 2>/dev/null || true
+> logs/mensajeria.log 2>/dev/null || true
+> logs/kafka-admin.log 2>/dev/null || true
+> logs/streaming.log 2>/dev/null || true
+> logs/frontend.log 2>/dev/null || true
+echo "    Logs limpiados"
 
 echo ""
 echo "================================================"
-echo "   SISTEMA DETENIDO COMPLETAMENTE"
+echo "   SISTEMA DETENIDO"
 echo "   Disco disponible: $(df -h / | tail -1 | awk '{print $4}')"
+echo "   Ya puedes parar la instancia AWS."
 echo "================================================"
