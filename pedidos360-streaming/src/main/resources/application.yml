@@ -42,6 +42,7 @@ management:
 
 logging:
   level:
-    root: INFO
-    com.example.pedidos360_streaming: DEBUG
-    org.apache.kafka: INFO
+    root: WARN
+    org.springframework.security: WARN
+    org.springframework.web: WARN
+    com.example: INFO

@@ -1,4 +1,4 @@
-﻿server:
+server:
   port: 8083
 
 spring:
@@ -42,6 +42,7 @@ management:
 
 logging:
   level:
-    root: INFO
-    com.example.pedidos360_mensajeria: INFO
-    org.springframework.amqp: INFO
+    root: WARN
+    org.springframework.security: WARN
+    org.springframework.web: WARN
+    com.example: INFO

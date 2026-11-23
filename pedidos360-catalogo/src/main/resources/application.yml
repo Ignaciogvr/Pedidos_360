@@ -1,4 +1,4 @@
-﻿server:
+server:
   port: 8082
 
 spring:
@@ -50,5 +50,8 @@ management:
 
 logging:
   level:
-    org.springframework.security: DEBUG
+    root: WARN
+    org.springframework.security: WARN
+    org.springframework.web: WARN
+    com.example: INFO
 

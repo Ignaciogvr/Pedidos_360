@@ -1,4 +1,4 @@
-﻿server:
+server:
   port: 8080
 
 spring:
@@ -39,6 +39,7 @@ management:
 
 logging:
   level:
-    org.springframework.security: DEBUG
-    org.springframework.web.client: DEBUG
-    com.example.pedidos360_bff: DEBUG
+    root: WARN
+    org.springframework.security: WARN
+    org.springframework.web: WARN
+    com.example: INFO
