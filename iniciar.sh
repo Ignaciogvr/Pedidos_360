@@ -71,34 +71,36 @@ docker exec kafka-broker-1 kafka-topics \
 
 # --- 6. MICROSERVICIOS JAVA ---
 echo ""
-echo "[6/7] Arrancando microservicios Java (java -jar -Xmx256m)..."
+echo "[6/7] Arrancando microservicios Java (java -jar -Xmx256m -WARN logging)..."
 
-nohup java -Xmx256m -jar $(ls pedidos360-bff/build/libs/*.jar | grep -v plain) \
+JAVA_OPTS="-Xmx256m -Dlogging.level.root=WARN -Dlogging.level.com.example=INFO"
+
+nohup java $JAVA_OPTS -jar $(ls pedidos360-bff/build/libs/*.jar | grep -v plain) \
     > logs/bff.log 2>&1 &
 echo "    BFF (8080) PID $!"
 
 sleep 3
-nohup java -Xmx256m -jar $(ls pedidos360-ordenes/build/libs/*.jar | grep -v plain) \
+nohup java $JAVA_OPTS -jar $(ls pedidos360-ordenes/build/libs/*.jar | grep -v plain) \
     > logs/ordenes.log 2>&1 &
 echo "    Ordenes (8081) PID $!"
 
 sleep 3
-nohup java -Xmx256m -jar $(ls pedidos360-catalogo/build/libs/*.jar | grep -v plain) \
+nohup java $JAVA_OPTS -jar $(ls pedidos360-catalogo/build/libs/*.jar | grep -v plain) \
     > logs/catalogo.log 2>&1 &
 echo "    Catalogo (8082) PID $!"
 
 sleep 3
-nohup java -Xmx256m -jar $(ls pedidos360-mensajeria/build/libs/*.jar | grep -v plain) \
+nohup java $JAVA_OPTS -jar $(ls pedidos360-mensajeria/build/libs/*.jar | grep -v plain) \
     > logs/mensajeria.log 2>&1 &
 echo "    Mensajeria (8083) PID $!"
 
 sleep 3
-nohup java -Xmx256m -jar $(ls pedidos360-kafka-admin/build/libs/*.jar | grep -v plain) \
+nohup java $JAVA_OPTS -jar $(ls pedidos360-kafka-admin/build/libs/*.jar | grep -v plain) \
     > logs/kafka-admin.log 2>&1 &
 echo "    Kafka Admin (8084) PID $!"
 
 sleep 3
-nohup java -Xmx256m -jar $(ls pedidos360-streaming/build/libs/*.jar | grep -v plain) \
+nohup java $JAVA_OPTS -jar $(ls pedidos360-streaming/build/libs/*.jar | grep -v plain) \
     > logs/streaming.log 2>&1 &
 echo "    Kafka Streaming (8085) PID $!"
 
