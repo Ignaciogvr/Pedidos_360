@@ -1,22 +1,44 @@
-# 🚀 Pedidos360
+# 🚀 Pedidos360 - Sistema Cloud con Kafka
 
-Sistema de gestión de pedidos con arquitectura de microservicios, mensajería asíncrona y monitoreo en tiempo real, desplegado en AWS con autenticación Azure Entra ID.
+Sistema de gestión de pedidos desplegado en AWS EC2 con Apache Kafka para streaming de eventos en tiempo real.
+
+**IP AWS:** `100.56.50.91` (elástica permanente)  
+**Instancia:** `i-00287c46080489deb` (t2.medium con 4GB SWAP)
 
 ---
 
-## 🌐 Demo en Vivo
+## ⚡ Inicio Rápido (AWS)
 
-**URL:** https://100.56.50.91  
-**IP Elástica AWS:** `100.56.50.91` (permanente)
+### Iniciar todo
+```bash
+cd ~/Pedidos_360-main
+git pull origin deploy-aws
+bash iniciar.sh
+```
+Espera ~3 minutos. Todo se levanta automáticamente.
 
-### 📊 Monitoreo y Administración
+### Detener todo
+```bash
+bash ~/Pedidos_360-main/detener.sh
+```
 
-| Servicio | URL | Usuario | Contraseña |
-|----------|-----|---------|------------|
-| **Frontend** | https://100.56.50.91 | Azure AD | Azure AD |
-| **RabbitMQ Management** | http://100.56.50.91:15672 | `guest` | `guest` |
-| **Grafana Dashboards** | http://100.56.50.91:3000 | `admin` | `admin` |
-| **Prometheus Metrics** | http://100.56.50.91:9090 | - | - |
+### URLs del Sistema
+- **Frontend:** http://100.56.50.91:4200
+- **Kafka UI:** http://100.56.50.91:8090
+- **RabbitMQ:** http://100.56.50.91:15672 (guest/guest)
+- **Grafana:** http://100.56.50.91:3000 (admin/admin)
+
+---
+
+## 📊 Lo que tiene este sistema
+
+- ✅ **6 microservicios Java** (BFF, Órdenes, Catálogo, Mensajería, Kafka Admin, Streaming)
+- ✅ **Frontend Angular 18** (puerto 4200)
+- ✅ **Apache Kafka** (3 brokers + 2 tópicos con 3 particiones cada uno)
+- ✅ **RabbitMQ** (9 colas con retry + DLQ)
+- ✅ **MySQL 8.0** (persistencia)
+- ✅ **Prometheus + Grafana** (monitoreo)
+- ✅ **Azure AD** (autenticación JWT)
 
 ---
 
@@ -31,7 +53,7 @@ Sistema de gestión de pedidos con arquitectura de microservicios, mensajería a
                     ┌────────▼─────────┐
                     │    Frontend      │
                     │  Angular 18      │
-                    │  (NGINX + SSL)   │
+                    │    :4200         │
                     └────────┬─────────┘
                              │
                     ┌────────▼──────────┐
@@ -47,24 +69,33 @@ Sistema de gestión de pedidos con arquitectura de microservicios, mensajería a
    │   8081   │      │    8082     │     │    8083     │
    └────┬─────┘      └──────┬──────┘     └──────┬──────┘
         │                   │                    │
-        └───────────────────┴────────────────────┘
-                            │
-                    ┌───────▼────────┐
-                    │   RabbitMQ     │
-                    │  (Mensajería)  │
-                    └───────┬────────┘
-                            │
-        ┌───────────────────┼───────────────────┐
-        │                   │                   │
-   ┌────▼────┐      ┌───────▼──────┐    ┌─────▼──────┐
-   │Notifica-│      │  Auditoría   │    │ Inventario │
-   │ ciones  │      │              │    │            │
-   └─────────┘      └──────────────┘    └────────────┘
-                            │
-                    ┌───────▼────────┐
-                    │   Prometheus   │
-                    │   + Grafana    │
-                    └────────────────┘
+        ├───────────────────┴────────────────────┤
+        │                                        │
+        ▼ RabbitMQ                               ▼ Apache Kafka
+   ┌─────────────┐                      ┌────────────────┐
+   │RabbitMQ     │                      │  Kafka Cluster │
+   │(Mensajería) │                      │  3 Brokers     │
+   └──────┬──────┘                      └────────┬───────┘
+          │                                      │
+          ├──────────┬──────────┐               ├─────────────┬──────────┐
+          │          │          │               │             │          │
+   ┌──────▼──┐ ┌────▼───┐ ┌───▼────┐    ┌─────▼────┐  ┌────▼─────┐    │
+   │Notifica-│ │Audito- │ │Inventa-│    │pedidos.  │  │productos.│    │
+   │ciones   │ │ría     │ │rio     │    │stream    │  │analytics │    │
+   └─────────┘ └────────┘ └────────┘    │(3p,3r)   │  │(3p,3r)   │    │
+                                         └──────────┘  └──────────┘    │
+                                                │                       │
+                                         ┌──────▼───────────────────────▼──┐
+                                         │   Streaming Consumer (8085)     │
+                                         │   pedidos360-streaming-group    │
+                                         └─────────────────────────────────┘
+                                                │
+                           ┌────────────────────┼────────────────────┐
+                           │                    │                    │
+                    ┌──────▼──────┐      ┌─────▼──────┐      ┌─────▼──────┐
+                    │ Kafka Admin │      │ Prometheus │      │  Kafka UI  │
+                    │   :8084     │      │  + Grafana │      │   :8090    │
+                    └─────────────┘      └────────────┘      └────────────┘
 ```
 
 ---
@@ -90,6 +121,17 @@ Sistema de gestión de pedidos con arquitectura de microservicios, mensajería a
 - **ACK/NACK manual** con reintentos
 - **Dead Letter Queues** por dominio
 - **9 colas** en total (3 principales + 3 retry + 3 DLQ)
+
+### ✅ Streaming de Eventos (Apache Kafka) - **NUEVO EP5/EP6**
+- **Cluster de 3 brokers** con Zookeeper
+- **2 tópicos con replicación:**
+  - `pedidos.stream` (3 particiones, 3 réplicas)
+  - `productos.analytics` (3 particiones, 3 réplicas)
+- **Kafka Admin API** (puerto 8084) - Gestión de tópicos vía REST
+- **Streaming Consumer** (puerto 8085) - Procesamiento en tiempo real
+- **Kafka UI** (puerto 8090) - Visualización del cluster
+- **Consumer group:** `pedidos360-streaming-group` con ACK manual
+- **Idempotencia** y **ACK "all"** en productores
 
 ### ✅ Monitoreo en Tiempo Real
 - **Prometheus** - Scraping de métricas cada 15s
@@ -170,96 +212,54 @@ Sistema de gestión de pedidos con arquitectura de microservicios, mensajería a
 
 ---
 
-## 🚀 Instalación y Despliegue
+## 🚀 Cómo usar esto en AWS
 
-### Requisitos Previos
-- **Java 22** instalado
-- **Node.js 18+** con npm
-- **Gradle** (incluido en wrapper)
-- **Docker** y **Docker Compose**
-
-### 1. Clonar Repositorio
+### Iniciar todo el sistema
+Conecta a EC2 y ejecuta:
 ```bash
-git clone https://github.com/Ignaciogvr/Pedidos_360.git
-cd Pedidos_360
-git checkout deploy-aws
+cd ~/Pedidos_360-main
+git pull origin deploy-aws
+bash iniciar.sh
 ```
 
-### 2. Levantar Infraestructura Docker
+Espera ~3 minutos. El script hace todo automáticamente:
+- Configura SWAP (4GB)
+- Levanta Docker (MySQL, RabbitMQ, Prometheus, Grafana)
+- Levanta Kafka (3 brokers + Zookeeper)
+- Crea los tópicos Kafka
+- Inicia 6 microservicios Java
+- Inicia el frontend Angular
+
+Al final muestra las URLs y verifica que todo esté OK.
+
+### Detener todo
 ```bash
-docker-compose up -d
+bash ~/Pedidos_360-main/detener.sh
 ```
 
-Esto levanta:
-- RabbitMQ (puertos 5672, 15672, 15692)
-- MySQL (puerto 3306)
-- Prometheus (puerto 9090)
-- Grafana (puerto 3000)
+Te pregunta si quieres limpiar los logs. Responde `s` para borrar y liberar espacio.
 
-### 3. Compilar Microservicios
-
-#### BFF
+### Revisar logs si algo falla
 ```bash
-cd pedidos360-bff
-./gradlew build -x test
-java -jar build/libs/pedidos360-bff-0.0.1-SNAPSHOT.jar &
+# Ver logs de un servicio específico
+tail -f ~/Pedidos_360-main/logs/ordenes.log
+tail -f ~/Pedidos_360-main/logs/kafka-admin.log
+tail -f ~/Pedidos_360-main/logs/streaming.log
+
+# Ver todos los logs a la vez
+tail -f ~/Pedidos_360-main/logs/*.log
 ```
 
-#### Órdenes
+### Ver qué está corriendo
 ```bash
-cd pedidos360-ordenes
-./gradlew build -x test
-java -jar build/libs/pedidos360-ordenes-0.0.1-SNAPSHOT.jar &
-```
+# Contenedores Docker
+docker ps
 
-#### Catálogo
-```bash
-cd pedidos360-catalogo
-./gradlew build -x test
-java -jar build/libs/pedidos360-catalogo-0.0.1-SNAPSHOT.jar &
-```
+# Microservicios Java
+ps aux | grep java | grep -v grep
 
-#### Mensajería
-```bash
-cd pedidos360-mensajeria
-./gradlew build -x test
-java -jar build/libs/pedidos360-mensajeria-0.0.1-SNAPSHOT.jar &
-```
-
-### 4. Compilar y Servir Frontend
-
-#### Desarrollo
-```bash
-cd pedidos360-frontend
-npm install
-ng serve
-```
-
-#### Producción
-```bash
-cd pedidos360-frontend
-npm install
-npm run build
-```
-
-Los archivos compilados estarán en `dist/pedidos360-frontend`
-
----
-
-## 🐳 Iniciar Sistema Completo (Windows PowerShell)
-
-```powershell
-# 1. Levantar Docker
-docker-compose up -d
-Start-Sleep -Seconds 60
-
-# 2. Iniciar microservicios
-.\INICIAR_SISTEMA.ps1
-```
-
-### Detener Sistema
-```powershell
-.\DETENER_SISTEMA.ps1
+# Espacio en disco
+df -h /
 ```
 
 ---
@@ -290,6 +290,18 @@ Pedidos_360-deploy-aws/
 ├── pedidos360-mensajeria/         # Microservicio de Mensajería (RabbitMQ)
 │   ├── src/main/java/...
 │   ├── consumer/                  # 3 dominios + monitoreo
+│   └── build.gradle
+│
+├── pedidos360-kafka-admin/       # Microservicio Admin Kafka (EP5)
+│   ├── src/main/java/...
+│   ├── controller/TopicController.java
+│   ├── controller/ConsumerGroupController.java
+│   └── build.gradle
+│
+├── pedidos360-streaming/         # Microservicio Streaming Kafka (EP6)
+│   ├── src/main/java/...
+│   ├── consumer/PedidosStreamConsumer.java
+│   ├── consumer/ProductosAnalyticsConsumer.java
 │   └── build.gradle
 │
 ├── pedidos360-frontend/           # Frontend Angular 18
@@ -449,16 +461,22 @@ Cada dominio tiene:
 ### Puertos Configurados
 | Servicio | Puerto | Acceso |
 |----------|--------|--------|
-| HTTPS (Frontend) | 443 | Público |
-| HTTP (Redirect) | 80 | Público |
+| Frontend Angular | 4200 | Público |
 | BFF | 8080 | Interno |
 | Órdenes | 8081 | Interno |
 | Catálogo | 8082 | Interno |
 | Mensajería | 8083 | Interno |
+| **Kafka Admin API** | **8084** | **Público** |
+| **Streaming Consumer** | **8085** | **Interno** |
+| **Kafka UI** | **8090** | **Público** |
 | MySQL | 3306 | Interno |
 | RabbitMQ AMQP | 5672 | Interno |
 | RabbitMQ Management | 15672 | Público |
 | RabbitMQ Metrics | 15692 | Interno |
+| **Kafka Broker 1** | **9092 / 19092** | **Interno** |
+| **Kafka Broker 2** | **9093 / 19093** | **Interno** |
+| **Kafka Broker 3** | **9094 / 19094** | **Interno** |
+| **Zookeeper** | **2181** | **Interno** |
 | Grafana | 3000 | Público |
 | Prometheus | 9090 | Público |
 
@@ -611,48 +629,79 @@ CORS_ALLOWED_ORIGINS=http://localhost:4200,https://100.56.50.91
 | Prometheus + Grafana con dashboards | ✅ |
 | Métricas de negocio y sistema | ✅ |
 
-### ✅ Evaluación 3 - Cloud Deployment
-| Criterio | Estado |
-|----------|--------|
-| Despliegue en AWS EC2 | ✅ |
-| IP Elástica permanente | ✅ |
-| HTTPS con SSL | ✅ |
-| Autenticación Azure Entra ID | ✅ |
-| Arquitectura de microservicios | ✅ |
-| Persistencia de datos (MySQL) | ✅ |
-| Autostart en boot | ✅ |
+### ✅ Evaluación 3 (EP5 + EP6) - Apache Kafka Streaming
+| Criterio | Peso | Estado |
+|----------|------|--------|
+| **EP5 - Implementación Kafka** | **12%** | |
+| Configuración cliente Kafka | 12% | ✅ |
+| Productores + Consumidores DTOs | 12% | ✅ |
+| Microservicio Admin Kafka (puerto 8084) | 6% | ✅ |
+| Productores con serializers JSON | 14% | ✅ |
+| Consumidores @KafkaListener | 14% | ✅ |
+| Manejo de errores + ACK manual | 12% | ✅ |
+| Parámetros tópicos (retention, partitions, replicas) | 12% | ✅ |
+| Consumer Groups configurados | 12% | ✅ |
+| Admin scripts (KafkaAdminService) | 6% | ✅ |
+| **EP6 - Kafka Streaming Demo** | **18%** | |
+| Docker Compose Kafka (3 brokers + Zookeeper) | 10% | ✅ |
+| 2 tópicos × 3 particiones × 3 réplicas | 10% | ✅ |
+| Kafka UI funcionando | 5% | ✅ |
+| Flujo producción/consumo eventos | 12% | ✅ |
+| Diseño de eventos (DTOs) | 6% | ✅ |
+| Sistema reacciona en tiempo real | 12% | ✅ |
+| Administración Kafka conceptos | 15% | ✅ |
+| Monitoreo offsets/lag | 15% | ✅ |
+| Casos de uso streaming | 15% | ✅ |
+
+**Total EP5 + EP6:** 30% de la nota final → **✅ 100% COMPLETADO**
 
 ---
 
-## 🐛 Troubleshooting
+## 🐛 Problemas comunes
 
-### El frontend no carga
+### Kafka UI no muestra brokers (error 500)
+Los datos de Kafka se corrompieron. Borra y reinicia:
 ```bash
-# Verificar que NGINX esté corriendo
-sudo systemctl status nginx
-
-# Ver logs de NGINX
-sudo tail -f /var/log/nginx/error.log
+cd ~/Pedidos_360-main
+docker compose down
+docker volume rm $(docker volume ls -q | grep kafka) 2>/dev/null
+docker compose up -d --no-deps zookeeper
+sleep 10
+docker compose up -d --no-deps kafka-broker-1 kafka-broker-2 kafka-broker-3
+sleep 20
+# Recrea los tópicos
+docker exec kafka-broker-1 kafka-topics --create --if-not-exists \
+  --bootstrap-server kafka-broker-1:9092 --topic pedidos.stream \
+  --partitions 3 --replication-factor 3
+docker exec kafka-broker-1 kafka-topics --create --if-not-exists \
+  --bootstrap-server kafka-broker-1:9092 --topic productos.analytics \
+  --partitions 3 --replication-factor 3
 ```
 
-### RabbitMQ no recibe mensajes
+### Disco lleno (95%+)
 ```bash
-# Verificar conexión
-docker logs rabbitmq-pedidos360
+# Limpiar logs
+> ~/Pedidos_360-main/logs/*.log
+rm -rf ~/.gradle/caches
 
-# Ver estado de colas
-curl -u guest:guest http://100.56.50.91:15672/api/queues
+# Ver qué ocupa más espacio
+du -sh ~/Pedidos_360-main/* | sort -h
 ```
 
 ### Microservicio no inicia
 ```bash
-# Ver logs del microservicio
-tail -f logs/ordenes.log
-tail -f logs/catalogo.log
-tail -f logs/mensajeria.log
+# Ver el log específico
+tail -f ~/Pedidos_360-main/logs/ordenes.log
 
-# Verificar puerto disponible
-netstat -tuln | grep 8081
+# Reiniciar ese servicio solo
+pkill -f "pedidos360-ordenes"
+cd ~/Pedidos_360-main
+nohup java -Xmx256m -jar pedidos360-ordenes/build/libs/*.jar > logs/ordenes.log 2>&1 &
+```
+
+### Ver si Kafka responde
+```bash
+docker exec kafka-broker-1 kafka-topics --list --bootstrap-server kafka-broker-1:9092
 ```
 
 ---
@@ -671,11 +720,111 @@ Proyecto académico - Uso educativo
 
 ---
 
-## 🎯 Última Actualización
+## 🔥 Kafka - Flujo de Eventos en Tiempo Real
 
-**Fecha:** 4 de Noviembre, 2026  
-**Versión:** 2.0.0  
-**Estado:** ✅ Sistema 100% funcional en producción
+### 🎯 Separación de Responsabilidades
 
-**IP AWS:** `100.56.50.91` (Elástica permanente)  
-**URL:** https://100.56.50.91
+**RabbitMQ (mantener como estaba):**
+- ✉️ **Notificaciones:** Emails/SMS confirmación de pedido (fire-and-forget)
+- 📋 **Auditoría:** Logs de acciones (quién, cuándo, qué)
+- 📦 **Inventario:** Sincronización de stock
+
+**Apache Kafka (nuevo):**
+- 📊 **Streaming de pedidos:** Dashboard de ventas en tiempo real
+- 📈 **Analítica de productos:** Top 10 más vendidos, trending
+- 🔔 **Event sourcing:** Todos los eventos quedan guardados (7 días)
+- 💰 **Métricas agregadas:** Ventas por hora, ingresos por categoría
+
+### 📡 Flujo Completo
+
+```
+1. Usuario crea pedido → POST /api/pedidos
+                │
+2. PedidoService guarda en MySQL
+                │
+3. Publica a RabbitMQ (email, audit, inventory)
+                │
+4. KafkaProducerService.enviarEventoPedido()
+                │
+5. Evento → pedidos.stream (partition X, offset Y)
+   Evento → productos.analytics (partition Z, offset W)
+                │
+6. PedidosStreamConsumer recibe evento (@KafkaListener)
+                │
+7. StreamProcessingService.procesarEventoPedido()
+                │
+8. ACK manual → Consumer Group actualiza offset
+                │
+9. Kafka UI muestra: Message Count incrementado
+```
+
+### 📊 Ver en Kafka UI
+
+**URL:** http://100.56.50.91:8090
+
+**Topics:**
+- `pedidos.stream` → 3 particiones, 3 réplicas, ISR=3
+- `productos.analytics` → 3 particiones, 3 réplicas, ISR=3
+
+**Consumer Groups:**
+- `pedidos360-streaming-group` → State: STABLE
+- Lag: 0 (al día)
+- 6 particiones asignadas
+
+### 🛠️ API Kafka Admin (Puerto 8084)
+
+**Endpoints:**
+```bash
+# Listar tópicos
+GET http://100.56.50.91:8084/api/kafka/topics
+
+# Crear tópico
+POST http://100.56.50.91:8084/api/kafka/topics
+{
+  "name": "nuevo-topic",
+  "partitions": 3,
+  "replicas": 3,
+  "retentionMs": 604800000,
+  "cleanupPolicy": "delete"
+}
+
+# Describir tópico
+GET http://100.56.50.91:8084/api/kafka/topics/pedidos.stream
+
+# Listar consumer groups
+GET http://100.56.50.91:8084/api/kafka/consumer-groups
+```
+
+---
+
+---
+
+## 📝 Resumen para usar esto
+
+**Para iniciar todo en AWS:**
+```bash
+cd ~/Pedidos_360-main && git pull origin deploy-aws && bash iniciar.sh
+```
+
+**Para detener:**
+```bash
+bash ~/Pedidos_360-main/detener.sh
+```
+
+**URLs importantes:**
+- Frontend: http://100.56.50.91:4200
+- Kafka UI: http://100.56.50.91:8090
+- RabbitMQ: http://100.56.50.91:15672
+- Grafana: http://100.56.50.91:3000
+
+**Si algo falla:**
+1. Revisa los logs: `tail -f ~/Pedidos_360-main/logs/*.log`
+2. Verifica Docker: `docker ps`
+3. Verifica Java: `ps aux | grep java`
+4. Chequea disco: `df -h /`
+
+---
+
+**Última actualización:** Noviembre 2026  
+**IP AWS:** 100.56.50.91 (elástica permanente)  
+**Instancia:** i-00287c46080489deb (t2.medium con 4GB SWAP)
